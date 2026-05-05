@@ -1,0 +1,21 @@
+<html>
+<head>
+    <title>My App</title>
+</head>
+<body>
+
+    <!-- Navbar lives here ONCE -->
+    <nav>
+        <a href="/app1/home/">Home</a> |
+        <a href="/app1/about/">About</a> |
+        <a href="/app1/contact/">Contact</a>
+    </nav>
+
+    <hr>
+
+    <!-- Each child page fills this box -->
+    {% block content %}
+    {% endblock %}
+
+</body>
+</html>

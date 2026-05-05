@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --c1: #ff6b6b;
+      --c2: #ffd93d;
+      --c3: #6bcb77;
+      --c4: #4d96ff;
+      --c5: #c77dff;
+      --dark: #0f0f13;
+      --card: #18181f;
+      --border: rgba(255,255,255,0.08);
+      --text: #f0f0f0;
+      --muted: #888;
+      --font-head: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    body {
+      background: var(--dark);
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+    }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 40px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(15,15,19,0.9);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      font-family: var(--font-head);
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--c4);
+      letter-spacing: 2px;
+    }
+
+    .nav-links { display: flex; align-items: center; gap: 8px; }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 14px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: color 0.2s, background 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-links a.active { color: var(--text); background: rgba(77,150,255,0.12); }
+
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+
+    .avatar-nav {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--c4), var(--c5));
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-head);
+      font-size: 13px; font-weight: 700;
+    }
+
+    .btn-logout {
+      padding: 8px 18px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      font-family: var(--font-body);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-logout:hover { border-color: var(--c1); color: var(--c1); }
+
+    /* Main */
+    .main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px;
+    }
+
+    /* Profile Header */
+    .profile-header {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 40px;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .profile-header::before {
+      content: '';
+      position: absolute;
+      width: 250px; height: 250px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(199,125,255,0.1), transparent 70%);
+      top: -60px; right: -40px;
+      pointer-events: none;
+    }
+
+    .avatar-large {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--c4), var(--c5));
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-head);
+      font-size: 28px; font-weight: 800;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .avatar-img {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .profile-info h2 {
+      font-family: var(--font-head);
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .profile-info p { font-size: 14px; color: var(--muted); }
+
+    .profile-badge {
+      margin-left: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+    }
+
+    .completion-label { font-size: 12px; color: var(--muted); }
+
+    .completion-bar {
+      width: 140px; height: 6px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .completion-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--c4), var(--c5));
+      transition: width 0.6s ease;
+    }
+
+    .completion-pct {
+      font-family: var(--font-head);
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--c4);
+    }
+
+    /* Form Card */
+    .form-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 40px;
+    }
+
+    .section-title {
+      font-family: var(--font-head);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .form-group.full { grid-column: 1 / -1; }
+
+    .form-group label {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      color: #aaa;
+      text-transform: uppercase;
+    }
+
+    .form-group input,
+    .form-group select {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-family: var(--font-body);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      width: 100%;
+    }
+
+    .form-group select option { background: var(--card); color: var(--text); }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--c4);
+      background: rgba(77,150,255,0.06);
+    }
+
+    .form-group input[readonly] {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .form-group input::placeholder { color: #444; }
+
+    /* Image upload */
+    .image-upload-area {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .image-upload-area:hover {
+      border-color: var(--c4);
+      background: rgba(77,150,255,0.04);
+    }
+
+    .image-upload-area input { display: none; }
+    .image-upload-area p { font-size: 13px; color: var(--muted); margin-top: 6px; }
+    .image-upload-area span { font-size: 12px; color: var(--c4); }
+
+    /* Save button */
+    .btn-save {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(90deg, var(--c4), var(--c5));
+      color: #fff;
+      font-family: var(--font-head);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      letter-spacing: 0.5px;
+      margin-top: 8px;
+    }
+    .btn-save:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-save:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .msg {
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    .msg.error { background: rgba(255,107,107,0.12); border: 1px solid rgba(255,107,107,0.3); color: var(--c1); display: block; }
+    .msg.success { background: rgba(107,203,119,0.12); border: 1px solid rgba(107,203,119,0.3); color: var(--c3); display: block; }
+
+    @media (max-width: 768px) {
+      .navbar { padding: 14px 20px; }
+      .main { padding: 24px 20px; }
+      .profile-header { flex-direction: column; align-items: flex-start; }
+      .profile-badge { margin-left: 0; align-items: flex-start; }
+      .form-grid { grid-template-columns: 1fr; }
+      .form-card { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="brand">◆ MyApp</div>
+    <div class="nav-links">
+      <a href="{% url 'dashboard' %}">Dashboard</a>
+      <a href="{% url 'profile' %}" class="active">Profile</a>
+    </div>
+    <div class="nav-right">
+      <div class="avatar-nav" id="avatarInitial">?</div>
+      <button class="btn-logout" onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <div class="main">
+
+    <!-- Profile Header -->
+    <div class="profile-header">
+      <div class="avatar-large" id="avatarLarge">?</div>
+      <div class="profile-info">
+        <h2 id="headerName">Loading...</h2>
+        <p id="headerEmail">—</p>
+      </div>
+      <div class="profile-badge">
+        <div class="completion-pct" id="pctText">0%</div>
+        <div class="completion-label">Profile complete</div>
+        <div class="completion-bar">
+          <div class="completion-fill" id="completionFill" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Card -->
+    <div class="form-card">
+      <div id="msg" class="msg"></div>
+
+      <form id="profileForm" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Basic Info -->
+        <div class="section-title">
+          <div class="dot" style="background:var(--c4)"></div>
+          Basic Info
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" id="first_name" placeholder="John"/>
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" id="last_name" placeholder="Doe"/>
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="email" readonly/>
+          </div>
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="tel" id="phone" placeholder="+91 98765 43210"/>
+          </div>
+        </div>
+
+        <!-- Personal Details -->
+        <div class="section-title">
+          <div class="dot" style="background:var(--c5)"></div>
+          Personal Details
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Gender</label>
+            <select id="gender">
+              <option value="">Select gender</option>
+              <option value="M">Male</option>
+              <option value="F">Female</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Date of Birth</label>
+            <input type="date" id="date_of_birth"/>
+          </div>
+          <div class="form-group full">
+            <label>Address</label>
+            <input type="text" id="address" placeholder="123 Main Street"/>
+          </div>
+          <div class="form-group">
+            <label>City</label>
+            <input type="text" id="city" placeholder="Mumbai"/>
+          </div>
+          <div class="form-group">
+            <label>State</label>
+            <input type="text" id="state" placeholder="Maharashtra"/>
+          </div>
+          <div class="form-group">
+            <label>Pincode</label>
+            <input type="text" id="pincode" placeholder="400001"/>
+          </div>
+          <div class="form-group">
+            <label>Country</label>
+            <input type="text" id="country" placeholder="India"/>
+          </div>
+        </div>
+
+        <!-- Profile Image -->
+        <div class="section-title">
+          <div class="dot" style="background:var(--c3)"></div>
+          Profile Image
+        </div>
+        <div class="form-group" style="margin-bottom:28px">
+          <label class="image-upload-area" for="imageInput">
+            <input type="file" id="imageInput" accept="image/*" onchange="previewImage(this)"/>
+            <p id="imageLabel">Click to upload profile image</p>
+            <span>PNG, JPG up to 5MB</span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn-save" id="saveBtn">Save Profile</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const access = localStorage.getItem('access_token');
+    if (!access) window.location.href = "{% url 'login' %}";
+
+    // Load profile data — pre-fill form
+    async function loadProfile() {
+      try {
+        const res = await fetch('/profiles/api/profile/', {
+          headers: { 'Authorization': 'Bearer ' + access }
+        });
+
+        if (res.status === 401) { window.location.href = "{% url 'login' %}"; return; }
+
+        const data = await res.json();
+
+        // Pre-fill all fields
+        setValue('first_name',    data.first_name);
+        setValue('last_name',     data.last_name);
+        setValue('email',         data.email);
+        setValue('phone',         data.phone);
+        setValue('gender',        data.gender);
+        setValue('date_of_birth', data.date_of_birth);
+        setValue('address',       data.address);
+        setValue('city',          data.city);
+        setValue('state',         data.state);
+        setValue('pincode',       data.pincode);
+        setValue('country',       data.country);
+
+        // Header update
+        const fullName = `${data.first_name || ''} ${data.last_name || ''}`.trim() || 'Your Name';
+        document.getElementById('headerName').textContent = fullName;
+        document.getElementById('headerEmail').textContent = data.email || '';
+        const initial = (data.first_name || 'U')[0].toUpperCase();
+        document.getElementById('avatarLarge').textContent = initial;
+        document.getElementById('avatarInitial').textContent = initial;
+
+        // Completion
+        const fields = [data.first_name, data.last_name, data.email, data.phone, data.gender, data.date_of_birth, data.address, data.city, data.state, data.country];
+        const filled = fields.filter(f => f && f !== '').length;
+        const pct = Math.round((filled / fields.length) * 100);
+        document.getElementById('pctText').textContent = pct + '%';
+        document.getElementById('completionFill').style.width = pct + '%';
+
+      } catch(err) {
+        console.error('Failed to load profile', err);
+      }
+    }
+
+    function setValue(id, val) {
+      const el = document.getElementById(id);
+      if (el && val !== null && val !== undefined) el.value = val;
+    }
+
+    function previewImage(input) {
+      if (input.files && input.files[0]) {
+        document.getElementById('imageLabel').textContent = '✓ ' + input.files[0].name;
+      }
+    }
+
+    // Save profile
+    document.getElementById('profileForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const msg = document.getElementById('msg');
+      msg.className = 'msg';
+      const btn = document.getElementById('saveBtn');
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+
+      const formData = new FormData();
+      formData.append('first_name',    document.getElementById('first_name').value);
+      formData.append('last_name',     document.getElementById('last_name').value);
+      formData.append('phone',         document.getElementById('phone').value);
+      formData.append('gender',        document.getElementById('gender').value);
+      formData.append('date_of_birth', document.getElementById('date_of_birth').value);
+      formData.append('address',       document.getElementById('address').value);
+      formData.append('city',          document.getElementById('city').value);
+      formData.append('state',         document.getElementById('state').value);
+      formData.append('pincode',       document.getElementById('pincode').value);
+      formData.append('country',       document.getElementById('country').value);
+
+      const imgFile = document.getElementById('imageInput').files[0];
+      if (imgFile) formData.append('image', imgFile);
+
+      try {
+        const res = await fetch('/profiles/api/profile/', {
+          method: 'PUT',
+          headers: {
+            'Authorization': 'Bearer ' + access,
+            'X-CSRFToken': getCookie('csrftoken')
+          },
+          body: formData
+        });
+
+        const result = await res.json();
+
+        if (res.ok) {
+          msg.className = 'msg success';
+          msg.textContent = '✓ Profile updated successfully!';
+          loadProfile(); // refresh header
+        } else {
+          msg.className = 'msg error';
+          const errors = Object.values(result).flat().join(' ');
+          msg.textContent = errors || 'Something went wrong.';
+        }
+      } catch(err) {
+        msg.className = 'msg error';
+        msg.textContent = 'Network error. Please try again.';
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'Save Profile';
+    });
+
+    async function logout() {
+      const refresh = localStorage.getItem('refresh_token');
+      try {
+        await fetch('profiles/api/logout/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+          body: JSON.stringify({ refresh })
+        });
+      } catch(e) {}
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      window.location.href = "{% url 'login' %}";
+    }
+
+    function getCookie(name) {
+      const val = `; ${document.cookie}`;
+      const parts = val.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    loadProfile();
+  </script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - General Mart</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: #4facfe;
+            padding: 15px 30px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .nav-links a {
+            color: white;
+            margin-left: 20px;
+            text-decoration: none;
+        }
+
+        /* Container */
+        .container {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        /* Card */
+        .card {
+            background: white;
+            padding: 30px;
+            width: 400px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .info {
+            margin: 12px 0;
+            font-size: 15px;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .value {
+            color: #555;
+        }
+
+        .btn {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background: #4facfe;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .btn:hover {
+            background: #3a8ee6;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+    <div class="logo">General<span>Mart</span></div>
+    <div class="nav-links">
+        <a href="{% url 'dashboard' %}">Dashboard</a>
+        <a href="{% url 'edit_profile' %}">Edit Profile</a>
+        <a href="{% url 'logout' %}">Logout</a>
+    </div>
+</div>
+
+<!-- Profile Section -->
+<div class="container">
+
+    <div class="card">
+        <h2>My Profile</h2>
+
+        <div class="info">
+            <span class="label">Username:</span>
+            <span class="value">{{ request.user.username }}</span>
+        </div>
+
+        <div class="info">
+            <span class="label">Email:</span>
+            <span class="value">{{ request.user.email }}</span>
+        </div>
+
+        <div class="info">
+            <span class="label">First Name:</span>
+            <span class="value">{{ request.user.first_name }}</span>
+        </div>
+
+        <div class="info">
+            <span class="label">Last Name:</span>
+            <span class="value">{{ request.user.last_name }}</span>
+        </div>
+
+        <div class="info">
+            <span class="label">Phone:</span>
+            <span class="value">{{ request.user.profile_data.phone }}</span>
+        </div>
+
+        <div class="info">
+            <span class="label">Address:</span>
+            <span class="value">{{ request.user.profile_data.address }}</span>
+        </div>
+
+        <a href="{% url 'edit_profile' %}" class="btn">Edit Profile</a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

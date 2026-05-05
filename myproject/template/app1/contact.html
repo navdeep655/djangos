@@ -1,0 +1,10 @@
+{%extends 'base.html'%}
+
+{% block content%}
+<h1>the detail of student {{sdata}}</h1>
+{% for student in sdata %}
+    <h1>The detail of student {{ student.age}} </h1>
+     <h1>The detail of student {{ student.name}} </h1>
+{% endfor %}
+
+{%endblock%}

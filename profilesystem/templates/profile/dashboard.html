@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --c1: #ff6b6b;
+      --c2: #ffd93d;
+      --c3: #6bcb77;
+      --c4: #4d96ff;
+      --c5: #c77dff;
+      --dark: #0f0f13;
+      --card: #18181f;
+      --card2: #1e1e27;
+      --border: rgba(255,255,255,0.08);
+      --text: #f0f0f0;
+      --muted: #888;
+      --font-head: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    body {
+      background: var(--dark);
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+    }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 40px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(15,15,19,0.9);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      font-family: var(--font-head);
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--c4);
+      letter-spacing: 2px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 14px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-links a.active { color: var(--text); background: rgba(77,150,255,0.12); }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--c4), var(--c5));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-head);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-logout {
+      padding: 8px 18px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      font-family: var(--font-body);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-logout:hover { border-color: var(--c1); color: var(--c1); }
+
+    /* Main content */
+    .main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 40px;
+    }
+
+    /* Welcome hero */
+    .hero {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px 44px;
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(77,150,255,0.12), transparent 70%);
+      top: -80px; right: -60px;
+      pointer-events: none;
+    }
+
+    .hero-tag {
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--c4);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .hero h2 {
+      font-family: var(--font-head);
+      font-size: 36px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .hero h2 span {
+      background: linear-gradient(90deg, var(--c4), var(--c5));
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 15px;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn-primary {
+      padding: 11px 24px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(90deg, var(--c4), var(--c5));
+      color: #fff;
+      font-family: var(--font-head);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.1s;
+      display: inline-block;
+    }
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    .btn-secondary {
+      padding: 11px 24px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      font-family: var(--font-head);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+      display: inline-block;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.05); }
+
+    /* Stats row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px 28px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .stat-card:hover { border-color: rgba(255,255,255,0.15); transform: translateY(-2px); }
+
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 100%;
+      border-radius: 3px 0 0 3px;
+    }
+
+    .stat-card:nth-child(1)::after { background: var(--c4); }
+    .stat-card:nth-child(2)::after { background: var(--c3); }
+    .stat-card:nth-child(3)::after { background: var(--c2); }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .stat-value {
+      font-family: var(--font-head);
+      font-size: 30px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .stat-sub {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* Info cards row */
+    .cards-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .info-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+    }
+
+    .info-card-title {
+      font-family: var(--font-head);
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-card-title .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    .info-row:last-child { border-bottom: none; }
+    .info-row .key { color: var(--muted); }
+    .info-row .val { font-weight: 500; color: var(--text); }
+
+    .badge {
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-blue { background: rgba(77,150,255,0.15); color: var(--c4); }
+    .badge-green { background: rgba(107,203,119,0.15); color: var(--c3); }
+
+    @media (max-width: 768px) {
+      .navbar { padding: 14px 20px; }
+      .main { padding: 24px 20px; }
+      .stats-row { grid-template-columns: 1fr; }
+      .cards-row { grid-template-columns: 1fr; }
+      .hero { padding: 28px 24px; }
+      .hero h2 { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="brand">◆ MyApp</div>
+    <div class="nav-links">
+      <a href="{% url 'dashboard' %}" class="active">Dashboard</a>
+      <a href="{% url 'profile' %}">Profile</a>
+    </div>
+    <div class="nav-right">
+      <div class="avatar" id="avatarInitial">?</div>
+      <button class="btn-logout" onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <div class="main">
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-tag">◆ Welcome back</div>
+      <h2>Hello, <span id="userName">User</span> 👋</h2>
+      <p>Here's your account overview. Update your profile anytime.</p>
+      <div class="hero-actions">
+        <a href="{% url 'profile' %}" class="btn-primary">View Profile</a>
+        <a href="#" class="btn-secondary">Settings</a>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Account Status</div>
+        <div class="stat-value" style="color: var(--c3)">Active</div>
+        <div class="stat-sub">All systems running</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Profile Complete</div>
+        <div class="stat-value" id="profileCompletion" style="color: var(--c2)">—</div>
+        <div class="stat-sub">Fill profile to increase</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Member Since</div>
+        <div class="stat-value" style="font-size:20px; color: var(--c4)" id="memberSince">—</div>
+        <div class="stat-sub">Account creation date</div>
+      </div>
+    </div>
+
+    <!-- Info Cards -->
+    <div class="cards-row">
+      <div class="info-card">
+        <div class="info-card-title">
+          <div class="dot" style="background:var(--c4)"></div>
+          Account Info
+        </div>
+        <div class="info-row">
+          <span class="key">Email</span>
+          <span class="val" id="d-email">—</span>
+        </div>
+        <div class="info-row">
+          <span class="key">Phone</span>
+          <span class="val" id="d-phone">—</span>
+        </div>
+        <div class="info-row">
+          <span class="key">Name</span>
+          <span class="val" id="d-name">—</span>
+        </div>
+        <div class="info-row">
+          <span class="key">Status</span>
+          <span class="badge badge-green">Verified</span>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-title">
+          <div class="dot" style="background:var(--c5)"></div>
+          Profile Details
+        </div>
+        <div class="info-row">
+          <span class="key">City</span>
+          <span class="val" id="d-city">—</span>
+        </div>
+        <div class="info-row">
+          <span class="key">Country</span>
+          <span class="val" id="d-country">—</span>
+        </div>
+        <div class="info-row">
+          <span class="key">Gender</span>
+          <span class="val" id="d-gender">—</span>
+        </div>
+        <div class="info-row">
+          <span class="key">DOB</span>
+          <span class="val" id="d-dob">—</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Load profile data
+    async function loadProfile() {
+        try {
+            const res = await fetch('/profiles/api/profile/', {
+                method: "GET",
+                credentials: "include"   // cookie automatically send hogi
+            });
+
+            if (res.status === 401 || res.status === 403) {
+                window.location.href = "{% url 'login' %}";
+                return;
+            }
+
+            const data = await res.json();
+
+            const fullName =
+                `${data.first_name || ''} ${data.last_name || ''}`.trim() || 'User';
+
+            document.getElementById('userName').textContent =
+                data.first_name || 'User';
+
+            document.getElementById('avatarInitial').textContent =
+                (data.first_name || 'U')[0].toUpperCase();
+
+            document.getElementById('d-email').textContent =
+                data.email || '—';
+
+            document.getElementById('d-phone').textContent =
+                data.phone || '—';
+
+            document.getElementById('d-name').textContent =
+                fullName;
+
+            document.getElementById('d-city').textContent =
+                data.city || '—';
+
+            document.getElementById('d-country').textContent =
+                data.country || '—';
+
+            document.getElementById('d-gender').textContent =
+                data.gender === 'M'
+                    ? 'Male'
+                    : data.gender === 'F'
+                    ? 'Female'
+                    : '—';
+
+            document.getElementById('d-dob').textContent =
+                data.date_of_birth || '—';
+
+            // Profile completion
+            const fields = [
+                data.first_name,
+                data.last_name,
+                data.email,
+                data.phone,
+                data.city,
+                data.country,
+                data.gender,
+                data.date_of_birth
+            ];
+
+            const filled = fields.filter(
+                f => f && f !== '' && f !== null
+            ).length;
+
+            document.getElementById('profileCompletion').textContent =
+                Math.round((filled / fields.length) * 100) + '%';
+
+        } catch (err) {
+            console.error("Profile load failed:", err);
+            window.location.href = "{% url 'login' %}";
+        }
+    }
+
+
+    // Logout
+    async function logout() {
+        try {
+            await fetch('/profiles/api/logout/', {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({})
+            });
+
+        } catch (err) {
+            console.log("Logout error:", err);
+        }
+
+        window.location.href = "{% url 'login' %}";
+    }
+
+    // Auto load profile
+    loadProfile();
+</script>
+</body>
+</html>

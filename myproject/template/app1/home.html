@@ -1,0 +1,38 @@
+{%extends 'base.html'%}
+     {%block content%}
+    <h1> {{app_name}}</h1>
+    <p>Manage all your data from here.</p>
+    <p>Total people enroll={{total_people}}</p>
+    <p>{{lists}}</p>
+
+    <table border="3" >
+        <tr>
+            <th>Name</th>
+            <th>Age</th>
+        </tr>
+            {%for list in lists%}
+        <tr>
+            <td>{{list.name}}</td>
+            <td>{{list.age}}</td>
+        </tr>
+        {%endfor%}
+       
+   </table>
+
+
+<table>
+{%for list in lists%}
+<td>{{ list.name }}</td>
+<td>
+    {% if list.age > 20 %}
+        adult
+    {% elif list.age < 20 %}
+        minor
+    {% else %}
+        hi
+    {% endif %}
+</td>
+{% endfor %}
+</table>
+{%endblock%}
+

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
+
+<h2>Welcome to Dashboard! 🎉</h2>
+<p id="welcomeMsg"></p>
+
+<button onclick="logout()">Logout</button>
+
+<hr>
+
+<h3>Products 📦</h3>
+
+<p id="loading" style="display:none;">⏳ Loading...</p>
+
+<div id="productList"></div>
+
+<button id="prevBtn" onclick="prevPage()" disabled>⬅️ Previous</button>
+<button id="nextBtn" onclick="nextPage()" disabled>Next ➡️</button>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+
+let currentPage = 1;
+let isAuthChecked = false;
+
+/* ---------------- LOADING ---------------- */
+function showLoading() {
+    document.getElementById("loading").style.display = "block";
+}
+function hideLoading() {
+    document.getElementById("loading").style.display = "none";
+}
+
+/* ---------------- TOKEN REFRESH ---------------- */
+async function refreshAccessToken() {
+    const refresh = localStorage.getItem('refresh');
+
+    // ✅ FIX: Refresh token hi nahi hai — seedha login pe bhejo
+    if (!refresh) {
+        redirectToLogin();
+        return null;
+    }
+
+    try {
+        const response = await fetch('/token/api/refresh/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refresh })
+        });
+
+        // ✅ FIX: Refresh token expire — login pe bhejo
+        if (!response.ok) {
+            redirectToLogin();
+            return null;
+        }
+
+        const data = await response.json();
+        localStorage.setItem('access', data.access);
+        return data.access;
+
+    } catch (err) {
+        redirectToLogin();
+        return null;
+    }
+}
+
+/* ---------------- REDIRECT TO LOGIN ---------------- */
+// ✅ FIX: Ek jagah se saara redirect handle hoga
+function redirectToLogin() {
+    localStorage.clear();
+    window.location.replace('/token/login/');
+}
+
+/* ---------------- AUTH FETCH ---------------- */
+async function fetchWithAuth(url) {
+    showLoading();
+
+    try {
+        let access = localStorage.getItem('access');
+
+        let response = await fetch(url, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + access
+            }
+        });
+
+        // Token expired → try refresh
+        if (response.status === 401) {
+            access = await refreshAccessToken();
+
+            // ✅ FIX: Refresh fail hua — redirectToLogin already call ho gaya
+            if (!access) return null;
+
+            response = await fetch(url, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + access
+                }
+            });
+
+            // ✅ FIX: Retry bhi 401 aaya — login pe bhejo
+            if (response.status === 401) {
+                redirectToLogin();
+                return null;
+            }
+        }
+
+        return response;
+
+    } catch (err) {
+        console.error(err);
+        return null;
+    } finally {
+        hideLoading();
+    }
+}
+
+/* ---------------- PRODUCTS ---------------- */
+function setButtons(data = {}) {
+    document.getElementById('prevBtn').disabled = !data.previous;
+    document.getElementById('nextBtn').disabled = !data.next;
+}
+
+async function getProducts(page = 1) {
+    Swal.fire({
+        title: "Please wait loading...",
+        allowOutsideClick: false,
+        theme: 'dark',
+        didOpen: () => {
+            Swal.showLoading();     
+        },
+        
+    });
+    disableButtons();
+
+    const response = await fetchWithAuth(`/token/api/product/?page=${page}`);
+    if (!response) return;
+
+    const data = await response.json();
+
+    const productList = document.getElementById('productList');
+    productList.innerHTML = '';
+
+    if (!response.ok) return;
+
+    if (!data.results || data.results.length === 0) {
+        productList.innerHTML = '<p>No products found</p>';
+        return;
+    }
+
+    data.results.forEach(product => {
+        productList.innerHTML += `
+            <div>
+                <h4>${product.name}</h4>
+                <p>Price: ${product.price}</p>
+                <hr>
+            </div>
+        `;
+    });
+
+    setButtons(data);
+    swal.close();
+}
+
+/* ---------------- BUTTON CONTROL ---------------- */
+function disableButtons() {
+    document.getElementById('prevBtn').disabled = true;
+    document.getElementById('nextBtn').disabled = true;
+}
+
+function nextPage() {
+    currentPage++;
+    getProducts(currentPage);
+}
+
+function prevPage() {
+    if (currentPage > 1) {
+        currentPage--;
+        getProducts(currentPage);
+    }
+}
+
+/* ---------------- LOGOUT ---------------- */
+async function logout() {
+    try {
+        await fetch('/token/api/logout/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('access')
+            },
+            body: JSON.stringify({
+                refresh: localStorage.getItem('refresh')
+            })
+        });
+    } catch (e) {}
+
+    redirectToLogin(); // ✅ FIX: Same function use karo
+}
+
+/* ---------------- AUTH CHECK ---------------- */
+window.onload = async () => {
+
+    if (isAuthChecked) return;
+    isAuthChecked = true;
+
+    const refresh = localStorage.getItem('refresh');
+
+    // ✅ FIX: Refresh token nahi — login pe bhejo
+    if (!refresh) {
+        redirectToLogin();
+        return;
+    }
+
+    document.getElementById('welcomeMsg').innerText = 'Aap successfully login hain! ✅';
+
+    const newAccess = await refreshAccessToken();
+
+    // refreshAccessToken ne already redirect kar diya hoga agar fail hua
+    if (!newAccess) return;
+
+    getProducts();
+};
+</script>
+
+</body>
+</html>

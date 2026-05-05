@@ -1,0 +1,33 @@
+<!-- templates/accounts/login.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Login </h1>
+
+<!-- Show error if wrong credentials -->
+{% if error %}
+    <p style="color:red;">{{ error }}</p>
+{% endif %}
+
+<form method="POST">
+    {% csrf_token %}
+
+    <p>
+        <label>Username:</label><br>
+        <input type="text" name="username" placeholder="Enter username">
+    </p>
+
+    <p>
+        <label>Password:</label><br>
+        <input type="password" name="password" placeholder="Enter password">
+    </p>
+
+    <button type="submit">Login</button>
+
+</form>
+
+<p>No account? <a href="{% url 'signup' %}">Signup here</a></p>
+
+{% endblock %}

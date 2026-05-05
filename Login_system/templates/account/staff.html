@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Staff Form</title>
+</head>
+<body>
+
+<h2>Add Staff</h2>
+
+<form method="POST" action="{%url 'Staff'%}">
+    {% csrf_token %}
+
+    <label>Name:</label><br>
+    <input type="text" name="name" maxlength="20" required><br><br>
+
+    <label>Email:</label><br>
+    <input type="email" name="email" required><br><br>
+
+    <label>Number:</label><br>
+    <input type="text" name="number" maxlength="10" required><br><br>
+
+    <button type="submit">Submit</button>
+</form>
+
+</body>
+</html>

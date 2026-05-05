@@ -1,0 +1,25 @@
+<!-- templates/accounts/dashboard.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Welcome to Dashboard!</h1>
+<p>Hello, <strong>{{ request.user.username }}</strong>! </p>
+
+<hr>
+
+<!-- Show user info -->
+<h2>Your Profile:</h2>
+<p>Username : {{ request.user.username }}</p>
+<p>Email    : {{ request.user.email }}</p>
+<p>Joined   : {{ request.user.date_joined }}</p>
+
+<hr>
+
+<!-- Logout button -->
+<a href="{% url 'logout' %}">
+    <button>Logout 🚪</button>
+</a>
+
+{% endblock %}
