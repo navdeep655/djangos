@@ -1,149 +1,351 @@
-<!-- templates/account/payment.html -->
-
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Payment - General Mart</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background: #f4f6f9;
-        }
-        .card {
-            border-radius: 15px;
-        }
-        .card-header {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border-radius: 15px 15px 0 0 !important;
-        }
-    </style>
-</head>
-<body>
 
-<!-- Navbar -->
+<head>
+
+    <title>Payment - General Mart</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+</head>
+
+<body class="bg-light">
+
+<!-- NAVBAR -->
+
 <nav class="navbar navbar-dark bg-dark px-4">
-    <span class="navbar-brand">🛒 GeNeRaL MaRt</span>
-    <a href="{% url 'dashboard' %}"
-       class="btn btn-outline-light btn-sm">
-        Dashboard 🏠
-    </a>
+
+    <span class="navbar-brand">
+        💳 General Mart Payment
+    </span>
+
 </nav>
 
-<!-- Messages -->
-<div id="msg" class="container mt-2">
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
-</div>
 
-<div class="container mt-4">
+<!-- PAYMENT SECTION -->
+
+<div class="container mt-5">
+
     <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card shadow">
 
-                <!-- Card Header -->
-                <div class="card-header p-4">
-                    <h4 class="mb-0">💳 Payment Details</h4>
-                    <small>GeNeRaL MaRt — Secure Payment</small>
+        <div class="col-md-6">
+
+            <div class="card shadow p-4">
+
+                <h2 class="text-center mb-4">
+
+                    Choose Payment Method 💰
+
+                </h2>
+
+
+                <!-- COD -->
+
+                <div class="form-check mb-3">
+
+                    <input class="form-check-input"
+                           type="radio"
+                           name="payment"
+                           id="cod"
+                           value="COD"
+                           checked>
+
+                    <label class="form-check-label"
+                           for="cod">
+
+                        Cash on Delivery (COD)
+
+                    </label>
+
                 </div>
 
-                <div class="card-body p-4">
 
-                    <form method="POST">
-                        {% csrf_token %}
+                <!-- UPI -->
 
-                        <!-- Card Number -->
-                        <div class="mb-3">
-                            <label class="fw-bold">
-                                Card Number
+                <div class="form-check mb-3">
+
+                    <input class="form-check-input"
+                           type="radio"
+                           name="payment"
+                           id="upi"
+                           value="UPI">
+
+                    <label class="form-check-label"
+                           for="upi">
+
+                        UPI Payment
+
+                    </label>
+
+                </div>
+
+
+                <!-- CARD -->
+
+                <div class="form-check mb-3">
+
+                    <input class="form-check-input"
+                           type="radio"
+                           name="payment"
+                           id="card"
+                           value="CARD">
+
+                    <label class="form-check-label"
+                           for="card">
+
+                        Debit / Credit Card
+
+                    </label>
+
+                </div>
+
+
+                <!-- UPI SECTION -->
+
+                <div id="upi-box" style="display:none;">
+
+                    <label class="form-label mt-3">
+                        Enter UPI ID
+                    </label>
+
+                    <input type="text"
+                           id="upi-id"
+                           class="form-control"
+                           placeholder="example@upi">
+
+                </div>
+
+
+
+                <!-- CARD SECTION -->
+
+                <div id="card-box" style="display:none;">
+
+                    <label class="form-label mt-3">
+                        Card Number
+                    </label>
+
+                    <input type="text"
+                           id="card-number"
+                           class="form-control mb-3"
+                           placeholder="1234 5678 9012 3456">
+
+
+                    <label class="form-label">
+                        Card Holder Name
+                    </label>
+
+                    <input type="text"
+                           id="card-name"
+                           class="form-control mb-3">
+
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Expiry
                             </label>
-                            <input type="number"
-                                   name="card_number"
-                                   class="form-control form-control-lg"
-                                   placeholder="1234 5678 9012 3456"
-                                   maxlength="16">
-                        </div>
 
-                        <!-- Expiry & CVV -->
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="fw-bold">
-                                    Expiry Date
-                                </label>
-                                <input type="date"
-                                       id="expiryDate"
-                                       name="expiry"
-                                       class="form-control form-control-lg"
-                                       placeholder="MM/YY">
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label class="fw-bold">CVV</label>
-                                <input type="password"
-                                       name="cvv"
-                                       class="form-control form-control-lg"
-                                       placeholder="***"
-                                       maxlength="3">
-                            </div>
-                        </div>
-
-                        <!-- Name on Card -->
-                        <div class="mb-4">
-                            <label class="fw-bold">
-                                Name on Card
-                            </label>
                             <input type="text"
-                                   name="card_name"
-                                   class="form-control form-control-lg"
-                                   value="{{ request.user.first_name }} {{ request.user.last_name }}">
+                                   id="expiry"
+                                   class="form-control"
+                                   placeholder="MM/YY">
+
                         </div>
 
-                        <!-- Pay Button -->
-                        <div class="d-grid">
-                            <button type="submit"
-                                    class="btn btn-success btn-lg">
-                                Pay ₹{{ total }} Now 💳
-                            </button>
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                CVV
+                            </label>
+
+                            <input type="password"
+                                   id="cvv"
+                                   class="form-control"
+                                   placeholder="123">
+
                         </div>
 
-                    </form>
+                    </div>
 
                 </div>
 
-                <!-- Security Note -->
-                <div class="card-footer text-center text-muted">
-                    🔒 100% Secure Payment
-                </div>
+
+                <!-- MESSAGE -->
+
+                <p id="message"
+                   class="text-center fw-bold mt-3">
+                </p>
+
+
+                <!-- BUTTON -->
+
+                <button id="place-order-btn"
+                        class="btn btn-success w-100 mt-3">
+
+                    Place Order 🛍️
+
+                </button>
 
             </div>
+
         </div>
+
     </div>
+
 </div>
+
 
 <script>
-    setTimeout(function() {
-        var msg = document.getElementById('msg');
-        if (msg) {
-            msg.style.transition = 'opacity 1s';
-            msg.style.opacity = '0';
-            setTimeout(function() {
-                msg.style.display = 'none';
-            }, 1000);
+
+// =========================
+// PAYMENT OPTION SWITCH
+// =========================
+
+let paymentOptions =
+    document.querySelectorAll(
+        'input[name="payment"]'
+    );
+
+paymentOptions.forEach(option => {
+
+    option.addEventListener("change", function(){
+
+        let selected = this.value;
+
+        let upiBox =
+            document.getElementById("upi-box");
+
+        let cardBox =
+            document.getElementById("card-box");
+
+        // Hide all first
+        upiBox.style.display = "none";
+        cardBox.style.display = "none";
+
+        // Show selected section
+        if(selected === "UPI"){
+
+            upiBox.style.display = "block";
+
         }
-    }, 5000);
+
+        else if(selected === "CARD"){
+
+            cardBox.style.display = "block";
+
+        }
+
+    });
+
+});
 
 
-const expiryDate = document.getElementById("expiryDate");
-    if (expiryDate) {
-        const today = new Date().toISOString().split('T')[0];
-        expiryDate.setAttribute("min", today);
-    }
-</script>
+
+// =========================
+// PLACE ORDER
+// =========================
+
+document.getElementById("place-order-btn")
+
+.addEventListener("click", function(){
+
+    let paymentMethod =
+        document.querySelector(
+            'input[name="payment"]:checked'
+        ).value;
+
+    console.log("PAYMENT:", paymentMethod);
+
+
+    fetch("http://127.0.0.1:8000/account/placeorder/api/", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        credentials: "include",
+
+        body: JSON.stringify({
+
+            payment_method: paymentMethod
+
+        })
+
+    })
+
+    .then(res => res.json())
+
+    .then(data => {
+
+        console.log(data);
+
+        if(data.message){
+
+    message.innerHTML = `
+
+        <div class="alert alert-success">
+
+            <h4>
+                Order Placed Successfully ✅
+            </h4>
+
+            <p>
+                Order ID:
+                ${data.order_id}
+            </p>
+
+            <p>
+                Total Amount:
+                ₹${data.total_amount}
+            </p>
+
+            <button
+                onclick="viewOrder(${data.order_id})"
+                class="btn btn-primary mt-2">
+
+                View Order 📦
+
+            </button>
+
+        </div>
+
+    `;
+
+}
+
+        else{
+
+            message.innerText =
+                "Order Failed ❌";
+
+            message.style.color = "red";
+
+        }
+
+    })
+
+    .catch(error => {
+
+        console.log(error);
+
+    });
+
+});
+function viewOrder(orderId){
+
+    window.location.href =
+        `/account/orderdetails/${orderId}/`;
+
+}
+
 </script>
 
 </body>

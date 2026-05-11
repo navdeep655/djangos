@@ -120,6 +120,8 @@
         {% endfor %}
     {% endif %}
 </div>
+<p id ="success" style="color:green; text-align: center;"></p>
+<p id ="error" style="color:red; text-align: center;"></p>
 
     <form method="POST">
         {% csrf_token %}
@@ -142,19 +144,52 @@
 
 </body>
 <script>
-    setTimeout(function() {
-        var msg = document.getElementById('msg');
-        if (msg) {
-            // Smooth fade out!
-            msg.style.transition = 'opacity 1s';
-            msg.style.opacity    = '0';
+document.querySelector("form").addEventListener('submit',function(e) {e.preventDefault()
+    let username=document.querySelector('input[name="username"]').value
+    let password=document.querySelector('input[name="password"]').value
+    if (username==""&& password=="")
+{
+    document.querySelector("#error").innerText="Please Enter the Credentials"
+}
+   else if (username=="")
+{
+    document.querySelector("#error").innerText="Please Enter the username"
+}
+  else if (password=="")
+{
+    document.querySelector("#error").innerText="Please Enter the password"
+}
 
-            // Puri tarah hatao
-            setTimeout(function() {
-                msg.style.display = 'none';
-            }, 1000);
-        }
-    }, 5000);
+    fetch("http://127.0.0.1:8000/account/login/api/",
+    {
+        method:'POST',
+        headers:{"Content-Type":"application/json" },
+        body:JSON.stringify({
+        username:username,
+        password:password
+        })
+    })
+    .then(function(response)
+     {
+        return response.json()
+     })
+   .then(function(data){
+    console.log(data)
+        if (data.message)
+    {
+         document.querySelector("#success").innerText=data.message
+         window.location.href="/account/dashboard/"
+         document.querySelector("#error").innerText=""
+
+    }
+    else if (data.error)
+    {
+        document.querySelector("#error").innerText=data.error
+    }
+    })
+
+
+    })
 </script>
 
 </html>

@@ -7,7 +7,7 @@ import os
 @receiver(post_save,sender=User)
 def create_profile(sender,instance,created,**kwargs):
     if created:
-        profile_data.object.create(User=instance)
+        profile_data.objects.create(user=instance)
 
 
 @receiver(post_delete, sender=Product)

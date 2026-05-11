@@ -8,119 +8,106 @@
 
 <!-- Navbar -->
 <nav class="navbar navbar-dark bg-dark px-4">
-    <span class="navbar-brand">🛒 GeNeRaL MaRt</span>
-    <a href="{% url 'dashboard' %}"
-       class="btn btn-outline-light btn-sm">
-        Dashboard
-    </a>
+    <span class="navbar-brand">🛒 GeneraL Mart</span>
+    <div>
+        <a href="{% url 'dashboard' %}"
+        class="btn btn-outline-light btn-sm me-2">
+            Dashboard
+        </a>
+        <a href="{% url 'cart' %}"
+        class="btn btn-outline-light btn-sm">
+            Wishlist
+        </a>
+    </div>
 </nav>
-
+<br>
+<!-- <p id ="success" style="color:green; text-align: center;"></p> -->
 <div class="container mt-4">
-    <h2 class="mb-4">Products 📦</h2>
+    <h2 class="mb-4">Products</h2>
+    <div class="row" id="product-list"></div>
+</div>
+</body>
+<script>
+    window.addEventListener("DOMContentLoaded",function(){  
+        fetch("http://127.0.0.1:8000/account/product/api/",
+            {
+                method:"GET",
+                credentials:"include"
+            })
+            .then(function(response){
+            return response.json()
+            })
+           .then (function(data){
+           
+            let container=document.querySelector("#product-list");
+            container.innerHTML="";
+            data.data.forEach(function(product){
+                let card=`
+                <div class="col-md-3 mb-4">
+                <div class="card shadow">
 
-    <!-- Messages -->
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-success alert-dismissible">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
+                    <img src="${product.image}"
+                         class="card-img-top"
+                         height="200"
+                         style="object-fit:cover;">
 
-    <!-- Products Grid -->
-    <div class="row">
-        {% for product in products %}
-        <div class="col-md-3 mb-4">
-            <div class="card shadow">
+                    <div class="card-body">
 
-                <!-- Image -->
-                {% if product.image %}
-                <img src="{{ product.image.url }}"
-                     class="card-img-top"
-                     height="200"
-                     style="object-fit:cover;">
-                {% endif %}
+                        <h5 class="card-title">
+                            ${product.name}
+                        </h5>
 
-                <div class="card-body">
+                        <p class="text-success fw-bold">
+                            ₹${product.price}
+                        </p>
 
-                    <!-- Name -->
-                    <h5 class="card-title">
-                        {{ product.name }}
-                    </h5>
+                        <p class="text-muted">
+                            Stock: ${product.stock}
+                        </p>
 
-                    <!-- Price -->
-                    <p class="text-success fw-bold">
-                        ₹{{ product.price }}
-                    </p>
-
-                    <!-- Stock -->
-                    <p class="text-muted">
-                        Stock: {{ product.stock }}
-                    </p>
-
-                    <!-- Button -->
-                    <form method="POST" action="{% url 'addcart' product.id %}">
-                        {% csrf_token %}
-                        <button type="submit"
+                        <button onclick="addToCart(${product.id})"
                                 class="btn btn-primary w-100">
-                            Add to Cart 🛒
+                                Add to Cart 🛒
                         </button>
-                    </form>
+                        
+                        <br>
+
+                        <p id="success-${product.id}"
+                            style="color:green; text-align:center;">
+                        </p
+                    </div>
 
                 </div>
             </div>
-        </div>
-        {% empty %}
-            <p class="text-muted">
-                No products found! 😕
-            </p>
-        {% endfor %}
-    </div>
+            `;
 
-    <!-- ✅ Pagination -->
-    <nav>
-        <ul class="pagination justify-content-center mt-4">
+            container.innerHTML += card;
+            })
+               
+        
+        
+        })
+      
 
-            <!-- Previous -->
-            {% if products.has_previous %}
-            <li class="page-item">
-                <a class="page-link"
-                   href="?page={{ products.previous_page_number }}">
-                    Previous
-                </a>
-            </li>
-            {% endif %}
+     })
 
-            <!-- Page Numbers -->
-            {% for num in products.paginator.page_range %}
-            <li class="page-item
-                {% if products.number == num %}active{% endif %}">
-                <a class="page-link"
-                   href="?page={{ num }}">
-                    {{ num }}
-                </a>
-            </li>
-            {% endfor %}
+    async function addToCart(productId) {
+        let response = await fetch(
+            "http://127.0.0.1:8000/account/cart/api/",
+            {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            credentials: "include",
+            body: JSON.stringify({product: productId,quantity: 1})}
+        );
+        let data = await response.json();
+        console.log(data);
+        document.getElementById(`success-${productId}`).innerText ="Added to Cart ";
 
-            <!-- Next -->
-            {% if products.has_next %}
-            <li class="page-item">
-                <a class="page-link"
-                   href="?page={{ products.next_page_number }}">
-                    Next
-                </a>
-            </li>
-            {% endif %}
+    }
 
-        </ul>
-    </nav>
 
-    <!-- Page Info -->
-    <p class="text-center text-muted">
-        Page {{ products.number }}
-        of {{ products.paginator.num_pages }}
-    </p>
 
-</div>
-</body>
+</script>
+
 </html>

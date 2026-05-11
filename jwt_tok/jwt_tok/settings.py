@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'tokens',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
-    'profileS'
 ]
 
 
@@ -116,7 +115,7 @@ DATABASES = {
     }
 }
 
-AUTH_USER_MODEL = 'profileS.User'
+
 
 LOGIN_URL='/token/login/'
 

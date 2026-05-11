@@ -118,13 +118,15 @@
     <h2 class="logo"><span>GeNeRaL MaRt</span></h2>
     <p style="text-align:center; margin-top:-10px;">Create your account</p>
 
-    <div class="messages">
+    <div id="msg">
         {% if messages %}
             {% for message in messages %}
                 <p>{{ message }}</p>
             {% endfor %}
         {% endif %}
     </div>
+    <p id="error-msg" style="color:red; text-align: center;"></p>
+    <p id ="success" style="color:green; text-align: center;"></p>
 
     <form method="POST">
         {% csrf_token %}
@@ -149,6 +151,74 @@
         <a href="{% url 'login' %}">Login</a>
     </div>
 </div>
+<script>
+    document.querySelector('form').addEventListener('submit',function(e){e.preventDefault()
+    let username=document.querySelector('input[name="username"]').value
+    let email=document.querySelector('input[name="email"]').value
+    let password1=document.querySelector('input[name="password1"]').value
+    let confirm=document.querySelector('input[name="password2"]').value
+    if (password1!=confirm){
+        document.querySelector('#error-msg').innerText="password don't match"
+        document.querySelector("#success").innerText=""
+    }
+    else if(password1.length<8)
+    {
+        document.querySelector("#error-msg").innerText="password should be equal and greater than 8"
+        document.querySelector("#success").innerText=""
+    }
+
+    else if(!/[A-Z]/.test(password1))
+    {
+        document.querySelector("#error-msg").innerText="one character must be Capital"   
+    }
+
+    else if (!/[a-z]/.test(password1))
+    {
+        document.querySelector("#error-msg").innerText="one character must be small"   
+    }
+    
+    else if (!/[0-9]/.test(password1))
+    {
+        document.querySelector("#error-msg").innerText="one character must be a number"
+    }
+
+    else if (!/[!@#$%^&*]/.test(password1))
+    {
+        document.querySelector("#error-msg").innerText="one character must be special character"   
+    }
+
+    else 
+    {
+         document.querySelector("#error-msg").innerText=""
+    }
+
+    fetch("http://127.0.0.1:8000/account/signup/api/", 
+        {
+            method:"POST",
+            headers:{"Content-Type": "application/json"},
+            body:JSON.stringify({
+                username:username,
+                email:email,
+                password:password1
+            })
+        })
+    .then(function(response){
+        return response.json()
+    })
+    .then(function(data){
+        if (data.message)
+    {
+         document.querySelector("#success").innerText="Account Created Succcesfully"
+         window.location.href="/account/signup/"
+    }
+    })
+
+    })
+
+    
+    
+
+</script>
 
 </body>
 </html>

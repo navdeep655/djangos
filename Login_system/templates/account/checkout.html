@@ -1,152 +1,270 @@
-<!-- templates/account/checkout.html -->
-
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Checkout - General Mart</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
 
-<!-- ✅ Navbar with links -->
+<head>
+
+    <title>Checkout - General Mart</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body class="bg-light">
+
+<!-- NAVBAR -->
+
 <nav class="navbar navbar-dark bg-dark px-4">
-    <span class="navbar-brand">🛒 GeNeRaL MaRt</span>
-    <div class="d-flex gap-2">
+    <span class="navbar-brand">🛒 GeneraL Mart</span>
+    <div>
         <a href="{% url 'dashboard' %}"
-           class="btn btn-outline-light btn-sm">
-            Dashboard 🏠
+        class="btn btn-outline-light btn-sm me-2">
+            Dashboard
         </a>
         <a href="{% url 'cart' %}"
-           class="btn btn-outline-light btn-sm">
-            Wishlist ❤️
+        class="btn btn-outline-light btn-sm">
+            Wishlist
         </a>
     </div>
 </nav>
 
-<div id="msg">
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">
-               {{ message }}
+<!-- CHECKOUT FORM -->
+
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-8">
+
+            <div class="card shadow p-4">
+
+                <h2 class="mb-4 text-center">
+                    Shipping Address 🚚
+                </h2>
+
+                <form id="checkout-form">
+
+                    <div class="mb-3">
+
+                        <label class="form-label"> Full Name </label>
+                        <input type="text"id="name"class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label"> Email </label>
+                        <input type="email"id="email"class="form-control"></div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Phone Number </label>
+                        <input type="text" id="phone" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label"> State</label>
+                        <input type="text"id="state"class="form-control">
+                    </div>
+        
+                    <div class="mb-3">
+                        <label class="form-label"> District</label>
+                        <input type="text" id="district"class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"> City  </label><input type="text" id="city" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Landmark</label><input type="text" id="landmark" class="form-control"> </div>
+
+                    <div class="mb-3">
+                        <label class="form-label"> Complete Address </label>
+                        <textarea id="address"class="form-control" rows="3"></textarea>
+                    </div>
+
+                    <p id="message"
+                       class="text-success text-center fw-bold">
+                    </p>
+
+                    <button type="submit"class="btn btn-success w-100">
+
+                        Save Address & Continue 🛍️
+
+                    </button>
+
+                </form>
+
             </div>
-        {% endfor %}
-    {% endif %}
-</div>
 
-<div class="container mt-4">
-    <div class="row">
-
-        <!-- Left - Order Summary -->
-        <div class="col-md-6">
-            <h4>Order Summary 📦</h4>
-            <table class="table">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Product</th>
-                        <th>Qty</th>
-                        <th>Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in cart_items %}
-                    <tr>
-                        <td>{{ item.product.name }}</td>
-                        <td>{{ item.quantity }}</td>
-                        <td>₹{{ item.total_price }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <h5 class="text-end">
-                Total: ₹{{ total }}
-            </h5>
-        </div>
-
-        <!-- Right - Delivery Form -->
-        <div class="col-md-6">
-            <h4>Delivery Details 🚚</h4>
-
-            <form method="POST">
-                {% csrf_token %}
-
-                <div class="mb-3">
-                    <label>Full Name</label>
-                    <input type="text"
-                           name="full_name"
-                           class="form-control"
-                           value="{{ request.user.first_name }} {{ request.user.last_name }}">
-                </div>
-
-                <div class="mb-3">
-                    <label>Address</label>
-                    <textarea name="address"
-                              class="form-control"
-                              rows="2">{{ request.user.profile_data.address }}</textarea>
-                </div>
-
-                <div class="mb-3">
-                    <label>City</label>
-                    <input type="text"
-                           name="city"
-                           class="form-control"
-                           placeholder="Enter city">
-                </div>
-
-                <div class="mb-3">
-                    <label>State</label>
-                    <input type="text"
-                           name="state"
-                           class="form-control"
-                           placeholder="Enter state">
-                </div>
-
-                <div class="mb-3">
-                    <label>Country</label>
-                    <input type="text"
-                           name="country"
-                           class="form-control"
-                           placeholder="Enter country">
-                </div>
-
-                <div class="mb-3">
-                    <label>Pincode</label>
-                    <input type="text"
-                           name="pincode"
-                           class="form-control"
-                           placeholder="Enter pincode">
-                </div>
-
-                <div class="mb-3">
-                    <label>Phone</label>
-                    <input type="text"
-                           name="phone"
-                           class="form-control"
-                           value="{{ request.user.profile_data.phone }}">
-                </div>
-
-                <!-- ✅ Place Order Button -->
-                <button type="submit"
-                        class="btn btn-success w-100 btn-lg">
-                    Place Order 
-                </button>
-
-            </form>
         </div>
 
     </div>
+
 </div>
 
+
 <script>
-    setTimeout(function() {
-        var msg = document.getElementById('msg');
-        if (msg) {
-            msg.style.transition = 'opacity 1s';
-            msg.style.opacity    = '0';
-            setTimeout(function() {
-                msg.style.display = 'none';
-            }, 1000);
-        }
-    }, 5000);
+
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    fetch("http://127.0.0.1:8000/account/checkout/api/", {
+
+        method: "GET",
+        credentials: "include"
+
+    })
+
+    .then(res => res.json())
+
+    .then(data => {
+
+        console.log(data);
+
+        document.getElementById("name").value =data.name;
+
+        document.getElementById("email").value =
+            data.email;
+
+        document.getElementById("phone").value =
+            data.phone;
+
+        document.getElementById("address").value =
+            data.address;
+
+    });
+
+});
+
+document.getElementById("checkout-form")
+
+.addEventListener("submit", function(e){
+
+    e.preventDefault();
+    let name =
+        document.getElementById("name").value.trim();
+
+    let email =
+        document.getElementById("email").value.trim();
+
+    let phone =
+        document.getElementById("phone").value.trim();
+
+    let state =
+        document.getElementById("state").value.trim();
+
+    let district =
+        document.getElementById("district").value.trim();
+
+    let city =
+        document.getElementById("city").value.trim();
+
+    let address =
+        document.getElementById("address").value.trim();
+
+    let landmark =
+        document.getElementById("landmark").value.trim();
+
+    let message =
+        document.getElementById("message");
+
+
+    // =========================
+    // EMPTY VALIDATION
+    // =========================
+
+    if(
+        !name ||
+        !email ||
+        !phone ||
+        !state ||
+        !district ||
+        !city ||
+        !address
+    ){
+
+        message.innerText =
+            "Please fill all required fields ❌";
+
+        message.style.color = "red";
+
+        return;
+    }
+
+
+    // =========================
+    // EMAIL VALIDATION
+    // =========================
+
+    let emailPattern =
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if(!emailPattern.test(email)){
+
+        message.innerText =
+            "Invalid Email ❌";
+
+        message.style.color = "red";
+
+        return;
+    }
+
+
+    // =========================
+    // PHONE VALIDATION
+    // =========================
+
+    let phonePattern = /^[0-9]{10}$/;
+
+    if(!phonePattern.test(phone)){
+
+        message.innerText =
+            "Phone number must be 10 digits ❌";
+
+        message.style.color = "red";
+
+        return;
+    }
+
+
+    let formData = {
+
+        full_name: name,
+        email: email,
+        phone: phone,
+        state: state,
+        district: district,
+        city: city,
+        address: address,
+        landmark: landmark
+
+    };
+
+
+    fetch("http://127.0.0.1:8000/account/checkout/api/", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        credentials: "include",
+
+        body: JSON.stringify(formData)
+
+    })
+
+    .then(res => res.json())
+
+    .then(data => {
+
+        console.log(data);
+
+        window.location.href ="/account/payment/";
+
+        message.style.color = "green";
+
+    });
+
+});
 </script>
 
 </body>

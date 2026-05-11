@@ -17,77 +17,77 @@ import time
 
 # Create your views here.
 
-@api_view(["POST"])
-@permission_classes([AllowAny])
-def signup(request):
-    data=request.data
-    serializer=Signup_serilizer(data=data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data)
-    return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+# @api_view(["POST"])
+# @permission_classes([AllowAny])
+# def signup(request):
+#     data=request.data
+#     serializer=Signup_serilizer(data=data)
+#     if serializer.is_valid():
+#         serializer.save()
+#         return Response(serializer.data)
+#     return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(["POST"])
-@permission_classes([AllowAny])
-def djlogin(request):
-    email = request.data.get("email")
-    password = request.data.get("password")
-    # 1. authenticate user
-    if not email or not password:
-        return Response({"error": "Please enter email and password"}, status=status.HTTP_400_BAD_REQUEST )
-    user = authenticate(username=email, password=password)
-    if user is None:   
-        return Response({"error": "Invalid credentials"})
+# @api_view(["POST"])
+# @permission_classes([AllowAny])
+# def djlogin(request):
+#     email = request.data.get("email")
+#     password = request.data.get("password")
+#     # 1. authenticate user
+#     if not email or not password:
+#         return Response({"error": "Please enter email and password"}, status=status.HTTP_400_BAD_REQUEST )
+#     user = authenticate(username=email, password=password)
+#     if user is None:   
+#         return Response({"error": "Invalid credentials"})
 
-    # 2. generate tokens
-    refresh = RefreshToken.for_user(user)
-    login(request,user)
-    request.session['refresh_token'] = str(refresh) 
-    return Response({ "refresh": str(refresh),"access": str(refresh.access_token),})
-
-
-def signup_page(request):
-    return render(request, "tokens/signup.html")
+#     # 2. generate tokens
+#     refresh = RefreshToken.for_user(user)
+#     login(request,user)
+#     request.session['refresh_token'] = str(refresh) 
+#     return Response({ "refresh": str(refresh),"access": str(refresh.access_token),})
 
 
-def login_page(request):
-    return render(request,"tokens/login.html")
-
-@login_required
-def dashboard(request):
-    return render(request,"tokens/dashboard.html")
+# def signup_page(request):
+#     return render(request, "tokens/signup.html")
 
 
-@api_view(["POST"])
-@permission_classes([IsAuthenticated])  # sirf logged in user logout kar sakta
-def djlogout(request):
-    try:
-        # 1. Refresh token lo request se
-        refresh_token = request.data.get("refresh")
+# def login_page(request):
+#     return render(request,"tokens/login.html")
 
-        if not refresh_token:
-            return Response(
-                {"error": "Refresh token do"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+# @login_required
+# def dashboard(request):
+#     return render(request,"tokens/dashboard.html")
 
-        # 2. JWT token blacklist karo (block kar do)
-        token = RefreshToken(refresh_token)
-        token.blacklist()
 
-        # 3. Django session bhi destroy karo
-        django_logout(request)
+# @api_view(["POST"])
+# @permission_classes([IsAuthenticated])  # sirf logged in user logout kar sakta
+# def djlogout(request):
+#     try:
+#         # 1. Refresh token lo request se
+#         refresh_token = request.data.get("refresh")
 
-        return Response(
-            {"message": "Logout successful!"},
-            status=status.HTTP_200_OK
-        )
-    except Exception as e:
-        return Response(
-            {"error": "Invalid token"},
-            status=status.HTTP_400_BAD_REQUEST
-        )
+#         if not refresh_token:
+#             return Response(
+#                 {"error": "Refresh token do"},
+#                 status=status.HTTP_400_BAD_REQUEST
+#             )
+
+#         # 2. JWT token blacklist karo (block kar do)
+#         token = RefreshToken(refresh_token)
+#         token.blacklist()
+
+#         # 3. Django session bhi destroy karo
+#         django_logout(request)
+
+#         return Response(
+#             {"message": "Logout successful!"},
+#             status=status.HTTP_200_OK
+#         )
+#     except Exception as e:
+#         return Response(
+#             {"error": "Invalid token"},
+#             status=status.HTTP_400_BAD_REQUEST
+#         )
 
 
 

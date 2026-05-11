@@ -5,294 +5,292 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from .models import *
 from django.core.paginator import Paginator
+from .serializer import *
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import AllowAny,IsAuthenticated
+from.dacoratorjwt import jwt_required
+from .authentication import *
+from rest_framework.parsers import JSONParser
 # Create your views here.
-import re
-def validate_password(password):
-    if len(password) < 8:
-        return "Password must be at least 8 characters!"
-    if not re.search(r'[A-Z]', password):
-        return "Password must contain uppercase letter!"
-    if not re.search(r'[a-z]', password):
-        return "Password must contain lowercase letter!"
-    if not re.search(r'[0-9]', password):
-        return "Password must contain at least one digit!"
-    if not re.search(r'[!@#$%^&*]', password):
-        return "Password must contain special character (!@#$%^&*)!"
-    return None
+class signupapi(APIView):
+        def post(self,request):
+            serializer=signup_serializer(data=request.data)
+            if serializer.is_valid():
+                user=serializer.save()
+                return Response({'message':"succesfull"})
+            return Response(serializer.errors)
+
+class signinapi(APIView):
+    permission_classes=[AllowAny]
+    authentication_classes = []
+    def post(self,request):
+        serializer=signin_serializer(data=request.data)
+        if serializer.is_valid():
+            username=serializer.validated_data["username"]
+            password=serializer.validated_data["password"]
+            user=authenticate(request,username=username,password=password)
+            if user is not None:
+                refresh=RefreshToken.for_user(user)
+                response= Response({"refresh": str(refresh),"access":str(refresh.access_token),"message":"successfull login"})
+                response.set_cookie(key="access_token",value=str(refresh.access_token),httponly=True,samesite='LAX')
+                response.set_cookie(key="refresh_token", value=str(refresh), httponly=True, samesite='LAX')
+                return response
+
+            else:
+                return Response({"error":"Invalid credentials"}, status=400)
+        return Response(serializer.errors,status.HTTP_400_BAD_REQUEST)
+                
+            
+
+
+class logoutapi(APIView):
+    authentication_classes = [CookieJWTAuthentication]
+    permission_classes=[AllowAny]
+
+    def post(self,request):
+        refreshtoken=request.COOKIES.get("refresh_token")
+        if not refreshtoken :
+            return Response({"error":"refreshtoken required"})
+        token=RefreshToken(refreshtoken)
+        token.blacklist()
+        response=Response({"message":"logout succesfully"})
+        response.delete_cookie('access_token')
+        response.delete_cookie("refresh_token")
+        return response
+    
 def signup(request):
-    if request.method=="POST":
-        username=request.POST.get("username")
-        email=request.POST.get("email")
-        password1=request.POST.get("password1")
-        password2=request.POST.get("password2")
-        
-        error = validate_password(password1)
-        if error:
-            messages.error(request, error)
-            return redirect("signup")
-
-        if password1 !=password2:
-            messages.error(request,"password did not match")
-            return redirect("signup")
-        if username==None:
-            messages.error(request,"username cannot be empty")
-            return redirect("signup")
-        if User.objects.filter(username=username).exists():
-            messages.error(request,"user already exists")
-            return redirect("signup")
-
-        if User.objects.filter(email=email).exists():
-            messages.error(request,"email already exists")
-            return redirect("signup")
-        
-        user=User.objects.create_user(username=username,email=email,password=password1)
-        return redirect ("login")
     return render(request,"account/signup.html")
 
-def signin(request):
-    if request.method=="POST":
-        username=request.POST["username"]
-        password=request.POST["password"]
+def both(request):
+    return render(request,"account/both.html")
 
-        if not username or not password:
-            messages.error(request,"Please enter Username and Password")
-            return redirect("login")
-
-        user=authenticate(request,username=username,password=password)
-
-        if user is not None:
-            login(request,user)
-
-            if user.is_superuser:
-                return redirect('admin_dashboard')  
-            else:
-                return redirect('dashboard')
-        else:
-            messages.error(request, "Invalid username or password!")
-            return redirect("login")
-
+def login(request):
     return render(request,"account/login.html")
 
-@login_required(login_url='/account/login/') 
+
+@jwt_required
 def dashboard(request):
-    return render(request,"account/dashboard.html")
+    latest_order = Order.objects.filter(user=request.user).order_by("-id").first()
+    return render(request,"account/dashboard.html",{"latest_order": latest_order })
 
-def logout_fun(request):
-    logout(request)
-    messages.success(request, "Logged out successfully!")
-    return redirect("login")
 
-@login_required(login_url='/account/login/')
+@jwt_required
 def profile(request):
     return render(request,"account/profile.html")
 
-
-@login_required(login_url='/account/login/')
+@jwt_required
 def edit_profile(request):
-    profiles, created = profile_data.objects.get_or_create(user=request.user)
-    if request.method=="POST":
-        request.user.first_name = request.POST.get("first_name")
-        request.user.last_name = request.POST.get("last_name")
-        request.user.save()
+    return render(request,"account/edit_profile.html")
 
-        profiles.phone = request.POST.get("phone")
-        profiles.address = request.POST.get("address")
-        profiles.save()
+@jwt_required
+def product(request):
+    return render(request,"account/products.html")
 
-        messages.success(request, "Profile updated successfully!")
-        return redirect("profile")
+@jwt_required
+def cart(request):
+    return render(request,"account/cart.html")
+@jwt_required
+def checkoutpage(request):
+    return render( request,"account/checkout.html")
+@jwt_required
+def paymentpage(request):
+    return render( request,"account/payment.html")
+@jwt_required
+def orderdetailspage(request, order_id):
+    return render( request,"account/orderdetails.html")
 
-    return render(request, "account/edit_profile.html",{'profiles': profiles })
 
 
-@login_required(login_url='/account/login/')
-def product_list(request):
-    products = Product.objects.all()
-    paginator=Paginator(products,8)
-    page=request.GET.get('page')
-    products=paginator.get_page(page)
-    return render(request, 'account/products.html', {'products': products})
 
-@login_required(login_url='/account/login/')
-def cart(request,product_id):
-    if request.method=="POST":
+
+class profileapi(APIView):
+    authentication_classes = [CookieJWTAuthentication]
+    permission_classes=[IsAuthenticated]
+    def get(self,request):
+        profile=profile_data.objects.get(user=request.user)
+        serializer=profile_serializer(profile)
+        return Response(serializer.data)
+    def put(self,request):
+        profile=profile_data.objects.get(user=request.user)
+        serializer=profile_serializer(profile,data=request.data,partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message":"profile_updated","data":serializer.data})
+
+   
+
+
+class productapi(APIView):
+    authentication_classes = []
+    # permission_classes=[]
+    def get(self,request):
+        products = Product.objects.all()
+        serial=product_serializer(products,many=True)
+        return Response({"data": serial.data})
+   
+
+class cartapi(APIView):
+    authentication_classes = [CookieJWTAuthentication]
+    permission_classes=[IsAuthenticated]
+    def post(self,request):
         user=request.user
-        product=Product.objects.get(id=product_id)
-        quantity=request.POST.get("quantity")
-        cart_item,create=Cart.objects.get_or_create(user=request.user,product=product)
-      
-        if not create:
-            cart_item.quantity+=1
-            cart_item.save()
-            messages.success(request, "Item added to cart")
+        product_id = request.data.get("product")
+        quantity = request.data.get('quantity', 1)
+        product = Product.objects.get(id=product_id)
+        cart_item, created = Cart.objects.get_or_create(user=user,product=product)
+        if created:
+            cart_item.quantity = quantity
         else:
-            messages.success(request, "Item added to cart")
-        return redirect("product")
-    return render(request,"account/cart_message.html")
-
-@login_required(login_url='/account/login/')
-def cart_page(request):
-    cart_items = Cart.objects.filter(user=request.user)
-    total = sum(item.total_price() for item in cart_items)
-    return render(request, 'account/cart.html', {'cart_items': cart_items,'total': total})
-
-def remove_from_cart(request, cart_id):
-    cart_item = Cart.objects.filter(id=cart_id).delete()
-    # cart_item.delete().first()
-    return redirect('cart')
-
-def update_cart(request, cart_id, action):
-    cart_item = Cart.objects.get(id=cart_id)
-    if action == 'increase':
-        cart_item.quantity += 1
+            cart_item.quantity += int(quantity)
         cart_item.save()
-    elif action == 'decrease':
-        if cart_item.quantity > 1:
+        return Response({"message":"Product added to cart","quantity": cart_item.quantity})
+    
+
+
+class cartlist(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [CookieJWTAuthentication]
+
+    def get(self, request):
+        cart = Cart.objects.filter(user=request.user)
+        serializer = cart_serializer(cart, many=True)
+        total = sum(item.total_price() for item in cart)
+        return Response({"cart": serializer.data,"total": total})
+    
+
+
+
+
+class cartupdateapi(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [CookieJWTAuthentication]
+    parser_classes = [JSONParser]
+    def post(self, request, cart_id):
+        action = request.data.get('action') 
+        print(request.data)
+        cart_item = Cart.objects.get(id=cart_id, user=request.user)
+        if action == "inc":
+            cart_item.quantity += 1
+        elif action == "dec":
             cart_item.quantity -= 1
-            cart_item.save()
-        else:
+        if cart_item.quantity <= 0:
             cart_item.delete()
-    return redirect('cart')
+            
+            return Response({"message": "Item removed"})
+
+        cart_item.save()
+        return Response({
+            "message": "Updated",
+            "quantity": cart_item.quantity
+        })
+  
+
+class cartdeleteapi(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [CookieJWTAuthentication]
+
+    def delete(self, request, cart_id):
+        Cart.objects.filter(id=cart_id, user=request.user).delete()
+
+        return Response({"message": "Deleted successfully"})
 
 
-#############################################################################################################################
+class checkoutapi(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [CookieJWTAuthentication]
+    def get(self, request):
+        profile = profile_data.objects.get(user=request.user)
+        full_name = (profile.user.first_name + " " + profile.user.last_name)
+        return Response({ "name": full_name, "email": profile.user.email,"phone": profile.phone,"address": profile.address})
+    def post(self, request):
+        serializer = ShippingSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response({"message":"Address Saved"})
+        return Response(serializer.errors)
     
-@login_required(login_url='/account/login/')
-def checkout(request):
-    cart_items = Cart.objects.filter(user=request.user)
-    total      = sum(item.total_price() for item in cart_items)
 
-    if request.method == "POST":
-        full_name = request.POST.get("full_name")
-        address   = request.POST.get("address")
-        city      = request.POST.get("city")
-        state     = request.POST.get("state")
-        country   = request.POST.get("country")
-        pincode   = request.POST.get("pincode")
-        phone     = request.POST.get("phone")
-        if not full_name or not address or not city or not state or not country or not pincode or not phone:
-             messages.error(request, "Please fill all fields!")
-             return redirect('checkout')
-        order = Order.objects.create( user = request.user, full_name= full_name,address = address, city = city,state = state,country= country,pincode= pincode,  phone= phone,
-            total_price = total,
-            status      = 'Pending'
-        )
-    
-        # Har cart item ke liye OrderItem banao
+
+class placeorderapi(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [CookieJWTAuthentication]
+
+    def post(self, request):
+        user = request.user
+        # GET CART ITEMS
+        cart_items = Cart.objects.filter(user=user)
+        if not cart_items.exists():
+            return Response({
+                "error": "Cart is Empty"
+            })
+        # GET LATEST SHIPPING
+        shipping = ShippingAddress.objects.filter(user=user).order_by("-id").first()
+        if not shipping:
+            return Response({"error": "Please add shipping address first"})
+
+        # CALCULATE TOTAL
+        total = 0
         for item in cart_items:
-            OrderItem.objects.create(
-                order    = order,
-                product  = item.product,
-                quantity = item.quantity,
-                price    = item.product.price
-            )
+            total += (item.product.price *item.quantity)
 
-        request.session['total'] = float(total)
+        # CREATE ORDER
+        order_data = {
+            "user": user.id,
+            "shipping_address": shipping.id,
+            "total_amount": total,
+            "payment_status": False,
+            "order_status": "Pending"}
+
+        order_serializer = OrderSerializer(data=order_data )
+
+        if order_serializer.is_valid():
+            order = order_serializer.save()
+        else:
+            return Response(order_serializer.errors)
+        # CREATE ORDER ITEMS
+        for item in cart_items:
+            item_data = {
+                "order": order.id,
+                "product": item.product.id,
+                "quantity": item.quantity,
+                "price": item.product.price
+            }
+            item_serializer = OrderItemSerializer(data=item_data)
+            if item_serializer.is_valid():
+                item_serializer.save()
+            else:
+                return Response(item_serializer.errors)
+        # CLEAR CART
         cart_items.delete()
-        return redirect('payment')
+        return Response({ "message": "Order Placed Successfully ","order_id": order.id, "total_amount":total })
 
-    return render(request, 'account/checkout.html', {
-        'cart_items': cart_items,
-        'total'     : total
-    })
+class orderdetailsapi(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [CookieJWTAuthentication]
+    def get(self, request, order_id):
+        user = request.user
+        order = Order.objects.get( id=order_id, user=user)
+        items = OrderItem.objects.filter(order=order)
+        product_data = []
+        for item in items:
+            product_data.append({"product_name":item.product.name,"product_image":item.product.image.url,"price": item.price, "quantity":item.quantity,"subtotal":item.price * item.quantity})
 
-
-# Success Page
-@login_required(login_url='/account/login/')
-def order_success(request):
-    return render(request, 'account/order_success.html')
-
-
-@login_required(login_url='/account/login/')
-def payment(request):
-    total = request.session.get('total', 0)
-    if request.method=="POST":
-        card_number=request.POST.get("card_number")
-        expiry=request.POST.get("expiry")
-        cvv=request.POST.get("cvv")
-
-        if not card_number  or not expiry or not cvv:
-            messages.error(request,"Enter the all details")
-            return redirect('payment')
-
-        if len(card_number)!=16:
-            messages.error(request,"invalid card number ")
-            return redirect('payment')
-        
-        if len(cvv)!=3:
-            messages.error(request,"Invalid cvv number")
-            return redirect('payment')
-
-        messages.success(request, "Payment Successful!")
-        return redirect('order_success')
-
-    return render(request, 'account/payment.html', {'total': total})
+        return Response({
+            "order_id": order.id,
+            "total_amount":order.total_amount,
+            "order_status":order.order_status,
+            "payment_status":order.payment_status,
+            "shipping_address": {"full_name": order.shipping_address.full_name,
+                                    "phone":order.shipping_address.phone,
+                                     "address":order.shipping_address.address,
+                                     "city": order.shipping_address.city,
+                                    "district": order.shipping_address.district,
+                                    "state": order.shipping_address.state
+            },
+            "products":product_data
+        })
 
 
-
-
-
-
-
-
-
-#Dashboard admin
-
-from django.contrib.admin.views.decorators import staff_member_required
-from django.db.models import Sum, Count
-from django.utils import timezone
-from datetime import datetime, timedelta
-
-@staff_member_required
-def admin_dashboard(request):
-
-    # Today ki date
-    today = timezone.now().date()
-
-    #  Total Users
-    total_users = User.objects.count()
-
-    #  Aaj ke naye users
-    new_users_today = User.objects.filter(
-        date_joined__date=today   
-    ).count()
-
-    #  Total Orders
-    total_orders = Order.objects.count()
-
-    #  Total Revenue
-    total_revenue = Order.objects.aggregate(
-        total=Sum('total_price')
-    )['total'] or 0
-
-    #  Aaj ke orders
-    orders_today = Order.objects.filter(
-        created_at__date=today
-    ).count()
-
-    #  Best Selling Products
-    best_products = OrderItem.objects.values(
-        'product__name',
-        'product__image'
-    ).annotate(
-        total_sold=Sum('quantity')
-    ).order_by('-total_sold')[:5]
-
-    #  Recent Orders
-    recent_orders = Order.objects.order_by('-created_at')[:10]
-
-    # Last 7 days ke users
-    last_7_days = User.objects.filter(
-        date_joined__date__gte=today - timedelta(days=7)
-    ).count()
-
-    return render(request, 'account/admin_dashboard.html', {
-        'total_users'    : total_users,
-        'new_users_today': new_users_today,
-        'total_orders'   : total_orders,
-        'total_revenue'  : total_revenue,
-        'orders_today'   : orders_today,
-        'best_products'  : best_products,
-        'recent_orders'  : recent_orders,
-        'last_7_days'    : last_7_days,
-    })

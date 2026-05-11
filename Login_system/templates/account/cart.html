@@ -1,115 +1,313 @@
-<!-- templates/cart/cart.html -->
-
 <!DOCTYPE html>
 <html>
 <head>
     <title>Cart - General Mart</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          rel="stylesheet">
 </head>
+
 <body>
 
 <!-- Navbar -->
 <nav class="navbar navbar-dark bg-dark px-4">
-    <span class="navbar-brand">🛒 General Mart</span>
-    <a href="{% url 'product' %}"
-       class="btn btn-outline-light btn-sm">
-        Continue Shopping
-    </a>
+
+    <span class="navbar-brand">
+        🛒 General Mart
+    </span>
+
+    <div>
+
+        <a href="{% url 'dashboard' %}"
+           class="btn btn-outline-light btn-sm me-2">
+
+            Dashboard
+
+        </a>
+
+        <a href="{% url 'product' %}"
+           class="btn btn-outline-light btn-sm">
+
+            Product
+
+        </a>
+
+    </div>
+
 </nav>
 
+<!-- Main Container -->
 <div class="container mt-4">
+
     <h2>My Cart 🛒</h2>
 
-    {% if cart_items %}
-
     <table class="table table-hover">
+
         <thead class="table-dark">
+
             <tr>
+
                 <th>Image</th>
                 <th>Product</th>
                 <th>Price</th>
                 <th>Quantity</th>
                 <th>Total</th>
                 <th>Action</th>
+
             </tr>
+
         </thead>
-        <tbody>
-            {% for item in cart_items %}
-            <tr>
-                <!-- Image -->
-                <td>
-                    <img src="{{ item.product.image.url }}"
-                         width="60"
-                         height="60"
-                         style="object-fit:cover;">
-                </td>
 
-                <!-- Name -->
-                <td>{{ item.product.name }}</td>
+        <tbody id="cart-body"></tbody>
 
-                <!-- Price -->
-                <td>₹{{ item.product.price }}</td>
-
-                <!-- ✅ Quantity + - Buttons -->
-                <td>
-                    <div class="d-flex align-items-center gap-2">
-
-                        <!-- Minus -->
-                        <a href="{% url 'update_cart' item.id 'decrease' %}"
-                           class="btn btn-sm btn-danger">
-                            -
-                        </a>
-
-                        <!-- Quantity Number -->
-                        <span class="fw-bold mx-1">
-                            {{ item.quantity }}
-                        </span>
-
-                        <!-- Plus -->
-                        <a href="{% url 'update_cart' item.id 'increase' %}"
-                           class="btn btn-sm btn-success">
-                            +
-                        </a>
-
-                    </div>
-                </td>
-
-                <!-- Total -->
-                <td>₹{{ item.total_price }}</td>
-
-                <!-- Remove -->
-                <td>
-                    <a href="{% url 'remove' item.id %}"
-                       class="btn btn-sm btn-danger">
-                        Remove ❌
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
     </table>
 
-    <!-- Total Amount -->
+    <!-- Total -->
     <div class="text-end mt-3">
-        <h4>Total Amount: ₹{{ total }}</h4>
-        <a href="{%url 'checkout'%}"
-           class="btn btn-success btn-lg">
-           Buy Your Products
-        </a>
-    </div>
 
-    {% else %}
-    <!-- Cart Empty -->
-    <div class="text-center mt-5">
-        <h4>Your Cart is Empty! 😕</h4>
-        <a href="{% url 'product' %}"
-           class="btn btn-primary mt-3">
-            Shop Now 🛒
-        </a>
+        <h4>
+            Total Amount: ₹
+            <span id="cart-total">0</span>
+        </h4>
+
+        <!-- ✅ Buy Button -->
+        <button id="buy-btn"
+                disabled
+                onclick="goToCheckout()"
+                class="btn btn-success">
+
+            Buy Now 🛍️
+
+        </button>
+
     </div>
-    {% endif %}
 
 </div>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function() {
+
+    fetch("http://127.0.0.1:8000/account/cartlist/api/", {
+
+        method: "GET",
+        credentials: "include"
+
+    })
+
+    .then(res => res.json())
+
+    .then(data => {
+
+        console.log("CART DATA:", data);
+
+        let container = document.getElementById("cart-body");
+        let totalBox = document.getElementById("cart-total");
+        let buyBtn = document.getElementById("buy-btn");
+
+        container.innerHTML = "";
+
+        // Empty Cart
+        if (data.cart.length === 0) {
+
+            container.innerHTML = `
+
+                <tr>
+
+                    <td colspan="6"
+                        class="text-center text-danger fs-4">
+
+                        Cart is Empty 🛒
+
+                    </td>
+
+                </tr>
+
+            `;
+
+            totalBox.innerText = 0;
+
+            // ❌ Disable Buy Button
+            buyBtn.disabled = true;
+
+            return;
+        }
+
+        //  Enable Buy Button
+        buyBtn.disabled = false;
+
+        // Render Cart Items
+        data.cart.forEach(item => {
+
+            let row = `
+
+                <tr>
+
+                    <!-- Product Image -->
+                    <td>
+
+                        <img src="http://127.0.0.1:8000${item.product_image}"
+                             width="60"
+                             height="60"
+                             style="object-fit:cover;">
+
+                    </td>
+
+                    <!-- Product Name -->
+                    <td>
+
+                        ${item.product_name}
+
+                    </td>
+
+                    <!-- Product Price -->
+                    <td>
+
+                        ₹${item.product_price}
+
+                    </td>
+
+                    <!-- Quantity -->
+                    <td>
+
+                        <button
+                            onclick="updateQty(${item.id}, 'dec')"
+                            class="btn btn-danger btn-sm">
+
+                            -
+
+                        </button>
+
+                        <span class="mx-2 fw-bold">
+
+                            ${item.quantity}
+
+                        </span>
+
+                        <button
+                            onclick="updateQty(${item.id}, 'inc')"
+                            class="btn btn-success btn-sm">
+
+                            +
+
+                        </button>
+
+                    </td>
+
+                    <!-- Total -->
+                    <td>
+
+                        ₹${item.product_price * item.quantity}
+
+                    </td>
+
+                    <!-- Remove -->
+                    <td>
+
+                        <button
+                            onclick="removeItem(${item.id})"
+                            class="btn btn-sm btn-danger">
+
+                            Remove
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+            container.innerHTML += row;
+
+        });
+
+        // Total Amount
+        totalBox.innerText = data.total;
+
+    })
+
+    .catch(error => {
+
+        console.log("FETCH ERROR:", error);
+
+    });
+
+});
+
+
+//  UPDATE QUANTITY
+function updateQty(id, action) {
+
+    fetch(`http://127.0.0.1:8000/account/cart/update/api/${id}/`, {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        credentials: "include",
+
+        body: JSON.stringify({
+            action: action
+        })
+
+    })
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        console.log("UPDATE RESPONSE:", data);
+
+        location.reload();
+
+    })
+
+    .catch(error => {
+
+        console.log("UPDATE ERROR:", error);
+
+    });
+
+}
+
+function removeItem(id) {
+
+    fetch(`http://127.0.0.1:8000/account/cart/delete/api/${id}/`, {
+
+        method: "DELETE",
+
+        credentials: "include"
+
+    })
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        console.log("DELETE RESPONSE:", data);
+
+        location.reload();
+
+    })
+
+    .catch(error => {
+
+        console.log("DELETE ERROR:", error);
+
+    });
+
+}
+
+function goToCheckout() {
+
+    window.location.href = "/account/checkout/";
+
+}
+
+</script>
 
 </body>
 </html>

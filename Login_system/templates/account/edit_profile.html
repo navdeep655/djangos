@@ -1,158 +1,290 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Profile - General Mart</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f6f9;
-        }
+<title>Edit Profile - General Mart</title>
 
-        /* Navbar */
-        .navbar {
-            background: #4facfe;
-            padding: 15px 30px;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-        }
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-        .logo {
-            font-size: 22px;
-            font-weight: bold;
-        }
+<style>
 
-        .nav-links a {
-            color: white;
-            margin-left: 20px;
-            text-decoration: none;
-        }
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+}
 
-        /* Container */
-        .container {
-            display: flex;
-            justify-content: center;
-            margin-top: 40px;
-        }
+/* NAVBAR */
+.navbar {
+    background:#4f46e5;
+    padding: 15px 30px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+}
 
-        /* Card */
-        .card {
-            background: white;
-            padding: 30px;
-            width: 400px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+}
 
-        .card h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+.nav-links a {
+    color: white;
+    margin-left: 20px;
+    text-decoration: none;
+}
 
-        label {
-            font-weight: bold;
-            font-size: 14px;
-        }
+/* CONTAINER */
+.container {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+}
 
-        input, textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            outline: none;
-        }
+/* CARD */
+.card {
+    background: white;
+    padding: 30px;
+    width: 420px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
 
-        textarea {
-            resize: none;
-            height: 80px;
-        }
+.card h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
 
-        input:focus, textarea:focus {
-            border-color: #4facfe;
-        }
+/* INPUT */
+label {
+    font-weight: bold;
+    font-size: 14px;
+}
 
-        button {
-            width: 100%;
-            padding: 10px;
-            background: #4facfe;
-            border: none;
-            color: white;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
 
-        button:hover {
-            background: #3a8ee6;
-        }
+textarea {
+    resize: none;
+    height: 80px;
+}
 
-        .messages p {
-            text-align: center;
-            color: green;
-            font-size: 14px;
-        }
+/* BUTTON */
+button {
+    width: 100%;
+    padding: 10px;
+   background:#4f46e5;
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
 
-    </style>
+button:hover {
+    background: #3a8ee6;
+}
+
+/* IMAGE BOX */
+.upload-box{
+    display:flex;
+    justify-content:center;
+    margin-bottom:20px;
+}
+
+.image-wrapper{
+    position:relative;
+    width:120px;
+}
+
+.profile-img{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    object-fit:cover;
+    border:3px solid #4f46e5;
+    cursor:pointer;
+}
+
+/* PENCIL ICON */
+.image-edit{
+    position:absolute;
+    bottom:5px;
+    right:5px;
+    width:32px;
+    height:32px;
+    background:#4f46e5;
+    color:#fff;
+    border-radius:50%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-decoration:none;
+    font-size:14px;
+    transition:0.3s;
+}
+
+.image-edit:hover{
+    transform:scale(1.1);
+}
+
+/* MESSAGE */
+.messages p{
+    text-align:center;
+    color:green;
+}
+
+</style>
 </head>
+
 <body>
 
-<!-- Navbar -->
+<!-- NAVBAR -->
 <div class="navbar">
     <div class="logo">General<span>Mart</span></div>
     <div class="nav-links">
         <a href="{% url 'dashboard' %}">Dashboard</a>
         <a href="{% url 'profile' %}">View Profile</a>
-        <a href="{% url 'logout' %}">Logout</a>
+        <a href="#" id="logout">Logout</a>
     </div>
 </div>
 
-<!-- Form Section -->
+<!-- FORM -->
 <div class="container">
 
-    <div class="card">
-        <h2>Edit Profile</h2>
+<div class="card">
 
-        <!-- Messages -->
-        <div class="messages">
-            {% if messages %}
-                {% for message in messages %}
-                    <p>{{ message }}</p>
-                {% endfor %}
-            {% endif %}
-        </div>
+    <h2>Edit Profile</h2>
 
-        <form method="POST">
-            {% csrf_token %}
-
-            <!-- User Table Fields -->
-            <label>First Name</label>
-            <input type="text" name="first_name" value="{{ request.user.first_name }}">
-
-            <label>Last Name</label>
-            <input type="text" name="last_name" value="{{ request.user.last_name }}">
-
-            <label>Email</label>
-            <input type="email" name="email" value="{{ request.user.email }}">
-
-            <!-- Profile Table Fields -->
-            <label>Phone</label>
-            <input type="text" name="phone" value="{{ request.user.profile.phone }}">
-
-            <label>Address</label>
-            <textarea name="address">{{ request.user.profile.address }}</textarea>
-
-            <button type="submit">Save Changes</button>
-
-        </form>
-
+    <div class="messages">
+        {% if messages %}
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        {% endif %}
     </div>
 
+    <form method="POST">
+        {% csrf_token %}
+
+        <!-- IMAGE -->
+        <label style="display:block;text-align:center;">Profile Image</label>
+
+        <div class="upload-box">
+
+            <div class="image-wrapper">
+
+                <img id="preview" class="profile-img"
+                src="{% if request.user.profile_data.image %}{{ request.user.profile_data.image.url }}{% else %}https://i.imgur.com/6VBx3io.png{% endif %}"
+                alt="Profile Image">
+
+                <!-- PENCIL ICON -->
+                <a href="#" class="image-edit" onclick="document.getElementById('fileInput').click(); return false;">
+                    <i class="fa-solid fa-pen"></i>
+                    </a>
+
+            </div>
+
+        </div>
+
+        <!-- FILE INPUT -->
+        <input type="file"
+            id="fileInput"
+            name="profile_image"
+            accept="image/*"
+            hidden
+            onchange="loadFile(event)">
+
+        <!-- FIELDS -->
+        <label>First Name</label>
+        <input type="text" name="first_name" value="{{ request.user.first_name }}">
+
+        <label>Last Name</label>
+        <input type="text" name="last_name" value="{{ request.user.last_name }}">
+
+        <label>Phone</label>
+        <input type="text" name="phone" value="{{ request.user.profile_data.phone }}">
+
+        <label>Address</label>
+        <textarea name="address">{{ request.user.profile_data.address }}</textarea>
+
+        <button type="submit">Save Changes</button>
+
+    </form>
+
 </div>
+
+</div>
+
+<script>
+
+
+function loadFile(event) {
+    const image = document.getElementById('preview');
+    image.src = URL.createObjectURL(event.target.files[0]);
+}
+
+
+document.querySelector("form").addEventListener("submit", function(e){
+
+    e.preventDefault();
+
+    let fileInput = document.querySelector('#fileInput');
+    let file = fileInput.files[0];
+
+    let formData = new FormData();
+
+    formData.append("first_name", document.querySelector('input[name="first_name"]').value);
+    formData.append("last_name", document.querySelector('input[name="last_name"]').value);
+    formData.append("phone", document.querySelector('input[name="phone"]').value);
+    formData.append("address", document.querySelector('textarea[name="address"]').value);
+
+    if(file){
+        formData.append("image", file);
+    }
+
+    fetch("http://127.0.0.1:8000/account/profile/api/", {
+        method: "PUT",
+        credentials: "include",
+        body: formData
+    })
+
+    .then(res => res.json())
+    .then(data => {
+        if(data.message){
+            window.location.href = "/account/profile/";
+        }
+    });
+
+});
+
+document.querySelector("#logout").addEventListener("click", function(e){
+
+    e.preventDefault();
+
+    fetch("http://127.0.0.1:8000/account/logout/api/", {
+        method:"POST",
+        credentials:"include"
+    })
+
+    .then(res => res.json())
+    .then(data => {
+        if(data.message){
+            window.location.href="/account/login/";
+        }
+    });
+
+});
+
+</script>
 
 </body>
 </html>

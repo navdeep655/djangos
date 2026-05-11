@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'account',
     'rest_framework',
-    'myapi'
+    'myapi',
+    'rest_framework_simplejwt.token_blacklist'
 ]
 
 # REST_FRAMEWORK = {
@@ -62,13 +63,14 @@ INSTALLED_APPS = [
 
 REST_FRAMEWORK={
      'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+        "account.authentication.CookieJWTAuthentication"
     )
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME':  timedelta(minutes=5),
-    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=10),
+    'ACCESS_TOKEN_LIFETIME':  timedelta(minutes=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=30),
 }
 
 
@@ -109,7 +111,7 @@ WSGI_APPLICATION = 'Login_system.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME':'mydata',
+        'NAME':'test',
         'USER':'root',
         'PASSWORD':'',
         'HOST':'localhost',

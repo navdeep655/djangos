@@ -14,34 +14,46 @@
         }
 
         /* Navbar */
-        .navbar {
-            background: #4facfe;
-            padding: 15px 30px;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        .navbar{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    background:#4f46e5;
+    padding:18px 0px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 4px 15px rgba(0,0,0,0.1);
+    z-index:1000;
+}
 
-        .logo {
-            font-size: 22px;
-            font-weight: bold;
-        }
+.logo{
+    color:white;
+    font-size:24px;
+    font-weight:bold;
+}
 
-        .logo span {
-            color: #fff;
-        }
+.logo span{
+    color:#ffd700;
+}
 
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            margin-left: 20px;
-            font-size: 14px;
-        }
+.nav-links{
+    display:flex;
+    gap:0px;
+    margin-left:auto; 
+}
 
-        .nav-links a:hover {
-            text-decoration: underline;
-        }
+.nav-links a{
+    color:white;
+    text-decoration:none;
+    font-weight:500;
+    transition:0.3s;
+}
+
+.nav-links a:hover{
+    color:#ffd700;
+}
 
         /* Container */
         .container {
@@ -98,6 +110,16 @@
         .btn:hover {
             background: #3a8ee6;
         }
+        .nav-logout{
+            color:white;
+            text-decoration:none;
+            font-weight:500;
+            transition:0.3s;
+        }
+
+        .nav-logout:hover{
+            color:#ffd700;
+        }
 
     </style>
 </head>
@@ -105,17 +127,18 @@
  
 <!-- Navbar -->
 <div class="navbar">
-    <div class="logo"><span>GeNeRaL MaRt</span></div>
+    <div class="logo">General<span>Mart</span>
+    </div>
     <div class="nav-links">
-        <a href="{% url 'logout' %}">Logout</a>
+      <a href="#" id="logout-btn" class="nav-logout">Logout</a>
     </div>
 </div>
-
+<br> <br> <br>
 <!-- Main Content -->
 <div class="container">
 
     <div class="welcome">
-        Welcome, {{ request.user.username }} 👋
+        Welcome, {{ request.user.username }} 
     </div>
 
     <div class="cards">
@@ -123,7 +146,10 @@
         <div class="card">
             <h3>🛒 My Orders</h3>
             <p>View and track your orders</p>
-            <a href="#" class="btn">View Orders</a>
+            <a href="/account/orderdetails/{{ latest_order.id }}/"
+            class="btn">
+                View Orders
+            </a>
         </div>
 
         <div class="card">
@@ -147,6 +173,27 @@
     </div>
 
 </div>
-
+<script>
+    document.querySelector("#logout-btn").addEventListener ('click',function(e) {e.preventDefault()
+        fetch("http://127.0.0.1:8000/account/logout/api/",
+            {
+                method:"POST",
+                headers:{"Content-Type":"application/json"},
+                credentials:"include",
+            })
+            .then(function(response){
+                return response.json()
+            })
+            .then(function(data){
+                 console.log(data)  
+                if (data.message){
+                    window.location.href="/account/login/"
+                }
+                else{
+                     window.location.href="/account/login/"
+                }
+            })
+    })
+</script>
 </body>
 </html>

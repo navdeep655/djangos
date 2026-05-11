@@ -1,142 +1,413 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile - General Mart</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f6f9;
-        }
+<title>My Profile</title>
 
-        /* Navbar */
-        .navbar {
-            background: #4facfe;
-            padding: 15px 30px;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-        }
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-        .logo {
-            font-size: 22px;
-            font-weight: bold;
-        }
+<style>
 
-        .nav-links a {
-            color: white;
-            margin-left: 20px;
-            text-decoration: none;
-        }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
 
-        /* Container */
-        .container {
-            display: flex;
-            justify-content: center;
-            margin-top: 40px;
-        }
+body{
+    background:#f4f7fb;
+    min-height:100vh;
+    padding:110px 20px 30px;
+}
 
-        /* Card */
-        .card {
-            background: white;
-            padding: 30px;
-            width: 400px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
+/* ================= NAVBAR ================= */
 
-        .card h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+.navbar{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    background:#4f46e5;
+    padding:18px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 4px 15px rgba(0,0,0,0.1);
+    z-index:1000;
+}
 
-        .info {
-            margin: 12px 0;
-            font-size: 15px;
-        }
+.logo{
+    color:white;
+    font-size:24px;
+    font-weight:bold;
+}
 
-        .label {
-            font-weight: bold;
-            color: #333;
-        }
+.logo span{
+    color:#ffd700;
+}
 
-        .value {
-            color: #555;
-        }
+.nav-links{
+    display:flex;
+    gap:20px;
+}
 
-        .btn {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
-            padding: 10px;
-            background: #4facfe;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
+.nav-links a{
+    color:white;
+    text-decoration:none;
+    font-weight:500;
+    transition:0.3s;
+}
 
-        .btn:hover {
-            background: #3a8ee6;
-        }
+.nav-links a:hover{
+    color:#ffd700;
+}
 
-    </style>
+/* ================= PROFILE CARD ================= */
+
+.container{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.card{
+    width:100%;
+    max-width:520px;
+    background:white;
+    border-radius:24px;
+    padding:35px;
+    box-shadow:0 15px 40px rgba(0,0,0,0.08);
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-3px);
+}
+
+/* ================= TOP ================= */
+
+.top{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.image-box{
+    position:relative;
+    width:140px;
+    margin:auto;
+}
+
+#profile_image{
+    width:140px;
+    height:140px;
+    border-radius:50%;
+    object-fit:cover;
+    border:5px solid #4f46e5;
+    box-shadow:0 5px 15px rgba(79,70,229,0.3);
+}
+
+.image-edit{
+    position:absolute;
+    bottom:8px;
+    right:8px;
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    background:#4f46e5;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-decoration:none;
+    transition:0.3s;
+}
+
+.image-edit:hover{
+    transform:scale(1.1);
+}
+
+.username{
+    margin-top:18px;
+    font-size:28px;
+    color:#222;
+}
+
+/* ================= INFO BOX ================= */
+
+.info-box{
+    background:#f9fafc;
+    border-radius:15px;
+    padding:16px 18px;
+    margin-bottom:16px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    transition:0.3s;
+}
+
+.info-box:hover{
+    background:#eef2ff;
+}
+
+.left{
+    display:flex;
+    flex-direction:column;
+}
+
+.label{
+    font-size:13px;
+    color:#777;
+    margin-bottom:6px;
+}
+
+.value{
+    font-size:16px;
+    font-weight:600;
+    color:#222;
+}
+
+.edit-icon{
+    color:#4f46e5;
+    font-size:18px;
+    text-decoration:none;
+    transition:0.3s;
+}
+
+.edit-icon:hover{
+    transform:scale(1.15);
+}
+
+/* ================= BUTTONS ================= */
+
+.btn{
+    display:block;
+    width:100%;
+    text-align:center;
+    padding:15px;
+    background:#4f46e5;
+    color:white;
+    border-radius:14px;
+    text-decoration:none;
+    font-weight:bold;
+    margin-top:20px;
+    transition:0.3s;
+}
+
+.btn:hover{
+    background: #3a8ee6;
+}
+
+.logout{
+    display:block;
+    text-align:center;
+    margin-top:18px;
+    color:#e11d48;
+    font-weight:bold;
+    text-decoration:none;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:600px){
+
+    .navbar{
+        padding:15px 20px;
+        flex-direction:column;
+        gap:10px;
+    }
+
+    .nav-links{
+        gap:15px;
+    }
+
+    .card{
+        padding:25px;
+    }
+
+    #profile_image{
+        width:120px;
+        height:120px;
+    }
+
+}
+
+</style>
 </head>
+
 <body>
 
-<!-- Navbar -->
+<!-- ================= NAVBAR ================= -->
+
 <div class="navbar">
-    <div class="logo">General<span>Mart</span></div>
+
+    <div class="logo">
+        General<span>Mart</span>
+    </div>
+
     <div class="nav-links">
         <a href="{% url 'dashboard' %}">Dashboard</a>
-        <a href="{% url 'edit_profile' %}">Edit Profile</a>
-        <a href="{% url 'logout' %}">Logout</a>
+        <a href="{% url 'profile' %}">View Profile</a>
+        <a href="#" id="logoutBtn">Logout</a>
     </div>
+
 </div>
 
-<!-- Profile Section -->
+
 <div class="container">
 
     <div class="card">
-        <h2>My Profile</h2>
 
-        <div class="info">
-            <span class="label">Username:</span>
-            <span class="value">{{ request.user.username }}</span>
+        <div class="top">
+
+            <div class="image-box">
+
+                <img id="profile_image"
+                src="https://i.imgur.com/6VBx3io.png">
+
+                
+
+            </div>
+
+            <h2 class="username" id="username"></h2>
+
         </div>
 
-        <div class="info">
-            <span class="label">Email:</span>
-            <span class="value">{{ request.user.email }}</span>
+        <!-- FIRST NAME -->
+
+        <div class="info-box">
+
+            <div class="left">
+                <span class="label">First Name</span>
+                <span class="value" id="first_name"></span>
+            </div>
+
+
         </div>
 
-        <div class="info">
-            <span class="label">First Name:</span>
-            <span class="value">{{ request.user.first_name }}</span>
+        <!-- LAST NAME -->
+
+        <div class="info-box">
+
+            <div class="left">
+                <span class="label">Last Name</span>
+                <span class="value" id="last_name"></span>
+            </div>
+
+
         </div>
 
-        <div class="info">
-            <span class="label">Last Name:</span>
-            <span class="value">{{ request.user.last_name }}</span>
+        <!-- EMAIL -->
+
+        <div class="info-box">
+
+            <div class="left">
+                <span class="label">Email</span>
+                <span class="value" id="email"></span>
+            </div>
+
+
         </div>
 
-        <div class="info">
-            <span class="label">Phone:</span>
-            <span class="value">{{ request.user.profile_data.phone }}</span>
+        <!-- PHONE -->
+
+        <div class="info-box">
+
+            <div class="left">
+                <span class="label">Phone</span>
+                <span class="value" id="phone"></span>
+            </div>
+
         </div>
 
-        <div class="info">
-            <span class="label">Address:</span>
-            <span class="value">{{ request.user.profile_data.address }}</span>
+        <!-- ADDRESS -->
+
+        <div class="info-box">
+
+            <div class="left">
+                <span class="label">Address</span>
+                <span class="value" id="address"></span>
+            </div>
+
+
         </div>
 
-        <a href="{% url 'edit_profile' %}" class="btn">Edit Profile</a>
+        <!-- BUTTON -->
+
+        <a href="{% url 'edit_profile' %}" class="btn">
+            Edit Profile
+        </a>
+        </a>
 
     </div>
 
 </div>
+
+
+<script>
+
+window.addEventListener("DOMContentLoaded", function () {
+
+    fetch("http://127.0.0.1:8000/account/profile/api/",{
+        method:"GET",
+        credentials:"include"
+    })
+
+    .then(function(response){
+        return response.json()
+    })
+
+    .then(function(data){
+
+        console.log(data)
+
+        document.querySelector("#username").innerText = data.username;
+        document.querySelector("#first_name").innerText = data.first_name;
+        document.querySelector("#last_name").innerText = data.last_name;
+        document.querySelector("#email").innerText = data.email;
+        document.querySelector("#phone").innerText = data.phone;
+        document.querySelector("#address").innerText = data.address;
+
+        if(data.image){
+            document.querySelector("#profile_image").src = data.image;
+        }
+
+    })
+
+})
+function logoutUser(e){ e.preventDefault();
+ fetch("http://127.0.0.1:8000/account/logout/api/",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        credentials:"include"
+    })
+
+    .then(function(response){
+        return response.json()
+    })
+
+    .then(function(data){
+
+        console.log(data)
+
+        if(data.message){
+            window.location.href="/account/login/"
+        }
+
+    })
+
+}
+
+document.querySelector("#logoutBtn")
+.addEventListener("click", logoutUser)
+
+
+</script>
 
 </body>
 </html>

@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>General Mart - Auth</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+
+            font-family:Arial, sans-serif;
+
+            height:100vh;
+
+            display:flex;
+
+            justify-content:center;
+
+            align-items:center;
+
+            background:linear-gradient(
+                120deg,
+                #4facfe,
+                #00f2fe
+            );
+
+        }
+
+        .auth-container{
+
+            width:400px;
+
+            background:white;
+
+            border-radius:12px;
+
+            padding:35px;
+
+            box-shadow:0 10px 30px rgba(0,0,0,0.2);
+
+        }
+
+        .logo{
+
+            text-align:center;
+
+            font-size:30px;
+
+            font-weight:bold;
+
+            margin-bottom:5px;
+
+        }
+
+        .logo span{
+
+            color:#4facfe;
+
+        }
+
+        .subtitle{
+
+            text-align:center;
+
+            color:#555;
+
+            margin-bottom:25px;
+
+        }
+
+        .tabs{
+
+            display:flex;
+
+            margin-bottom:25px;
+
+            border-radius:8px;
+
+            overflow:hidden;
+
+            border:1px solid #ddd;
+
+        }
+
+        .tab-btn{
+
+            flex:1;
+
+            padding:12px;
+
+            border:none;
+
+            background:#f1f1f1;
+
+            cursor:pointer;
+
+            font-weight:bold;
+
+            transition:0.3s;
+
+        }
+
+        .tab-btn.active{
+
+            background:#4facfe;
+
+            color:white;
+
+        }
+
+        .form-box{
+
+            display:none;
+
+        }
+
+        .form-box.active{
+
+            display:block;
+
+        }
+
+        label{
+
+            font-weight:bold;
+
+            font-size:14px;
+
+        }
+
+        input{
+
+            width:100%;
+
+            padding:10px;
+
+            margin-top:5px;
+
+            margin-bottom:15px;
+
+            border:1px solid #ccc;
+
+            border-radius:5px;
+
+            outline:none;
+
+        }
+
+        input:focus{
+
+            border-color:#4facfe;
+
+            box-shadow:0 0 5px rgba(79,172,254,0.5);
+
+        }
+
+        button.submit-btn{
+
+            width:100%;
+
+            padding:12px;
+
+            border:none;
+
+            border-radius:5px;
+
+            background:#4facfe;
+
+            color:white;
+
+            font-size:16px;
+
+            cursor:pointer;
+
+            transition:0.3s;
+
+        }
+
+        button.submit-btn:hover{
+
+            background:#318df5;
+
+        }
+
+        .message{
+
+            text-align:center;
+
+            margin-bottom:15px;
+
+            font-weight:bold;
+
+        }
+
+        @media(max-width:450px){
+
+            .auth-container{
+
+                width:90%;
+
+                padding:25px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+<div class="auth-container">
+
+    <!-- LOGO -->
+
+    <div class="logo">
+
+        <span>GeNeRaL MaRt</span>
+
+    </div>
+
+    <div class="subtitle">
+
+        Welcome to General Mart 🛒
+
+    </div>
+
+
+    <!-- TABS -->
+
+    <div class="tabs">
+
+        <button class="tab-btn active"
+                id="login-tab">
+
+            Login
+
+        </button>
+
+        <button class="tab-btn"
+                id="signup-tab">
+
+            Signup
+
+        </button>
+
+    </div>
+
+
+    <!-- MESSAGE -->
+
+    <p id="message"
+       class="message">
+    </p>
+
+
+    <!-- LOGIN FORM -->
+
+    <div id="login-form"
+         class="form-box active">
+
+        <form id="loginForm">
+
+            <label>Username</label>
+
+            <input type="text"
+                   id="login-username"
+                   placeholder="Enter username">
+
+            <label>Password</label>
+
+            <input type="password"
+                   id="login-password"
+                   placeholder="Enter password">
+
+            <button type="submit"
+                    class="submit-btn">
+
+                Login
+
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- SIGNUP FORM -->
+
+    <div id="signup-form"
+         class="form-box">
+
+        <form id="signupForm">
+
+            <label>Username</label>
+
+            <input type="text"
+                   id="signup-username"
+                   placeholder="Enter username">
+
+            <label>Email</label>
+
+            <input type="email"
+                   id="signup-email"
+                   placeholder="Enter email">
+
+            <label>Password</label>
+
+            <input type="password"
+                   id="signup-password"
+                   placeholder="Enter password">
+
+            <label>Confirm Password</label>
+
+            <input type="password"
+                   id="signup-confirm"
+                   placeholder="Confirm password">
+
+            <button type="submit"
+                    class="submit-btn">
+
+                Create Account
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+// ============================
+// TAB SWITCHING
+// ============================
+
+let loginTab =
+    document.getElementById("login-tab");
+
+let signupTab =
+    document.getElementById("signup-tab");
+
+let loginFormBox =
+    document.getElementById("login-form");
+
+let signupFormBox =
+    document.getElementById("signup-form");
+
+
+loginTab.addEventListener("click", function(){
+
+    loginTab.classList.add("active");
+
+    signupTab.classList.remove("active");
+
+    loginFormBox.classList.add("active");
+
+    signupFormBox.classList.remove("active");
+
+});
+
+
+signupTab.addEventListener("click", function(){
+
+    signupTab.classList.add("active");
+
+    loginTab.classList.remove("active");
+
+    signupFormBox.classList.add("active");
+
+    loginFormBox.classList.remove("active");
+
+});
+
+
+
+// ============================
+// LOGIN API
+// ============================
+
+document.getElementById("loginForm")
+
+.addEventListener("submit", function(e){
+
+    e.preventDefault();
+
+    let username =
+        document.getElementById(
+            "login-username"
+        ).value;
+
+    let password =
+        document.getElementById(
+            "login-password"
+        ).value;
+
+    let message =
+        document.getElementById("message");
+
+
+    if(username === "" || password === ""){
+
+        message.innerText =
+            "Please fill all fields";
+
+        message.style.color = "red";
+
+        return;
+    }
+
+
+    fetch(
+        "http://127.0.0.1:8000/account/login/api/",
+        {
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            credentials:"include",
+
+            body:JSON.stringify({
+
+                username:username,
+                password:password
+
+            })
+
+        }
+    )
+
+    .then(res => res.json())
+
+    .then(data => {
+
+        console.log(data);
+
+        if(data.message){
+
+            message.innerText =
+                "Login Successful ✅";
+
+            message.style.color = "green";
+
+            setTimeout(() => {
+
+                window.location.href =
+                    "/account/dashboard/";
+
+            }, 1000);
+
+        }
+
+        else{
+
+            message.innerText =
+                data.error || "Login Failed";
+
+            message.style.color = "red";
+
+        }
+
+    });
+
+});
+
+
+
+// ============================
+// SIGNUP API
+// ============================
+
+document.getElementById("signupForm")
+
+.addEventListener("submit", function(e){
+
+    e.preventDefault();
+
+    let username =
+        document.getElementById(
+            "signup-username"
+        ).value;
+
+    let email =
+        document.getElementById(
+            "signup-email"
+        ).value;
+
+    let password =
+        document.getElementById(
+            "signup-password"
+        ).value;
+
+    let confirm =
+        document.getElementById(
+            "signup-confirm"
+        ).value;
+
+    let message =
+        document.getElementById("message");
+
+
+    // VALIDATION
+
+    if(password !== confirm){
+
+        message.innerText =
+            "Passwords do not match";
+
+        message.style.color = "red";
+
+        return;
+    }
+
+
+    if(password.length < 8){
+
+        message.innerText =
+            "Password must be at least 8 characters";
+
+        message.style.color = "red";
+
+        return;
+    }
+
+
+    fetch(
+        "http://127.0.0.1:8000/account/signup/api/",
+        {
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+
+                username:username,
+                email:email,
+                password:password
+
+            })
+
+        }
+    )
+
+    .then(res => res.json())
+
+    .then(data => {
+
+        console.log(data);
+
+        if(data.message){
+
+            message.innerText =
+                "Account Created Successfully ✅";
+
+            message.style.color = "green";
+
+            // AUTO SWITCH TO LOGIN
+
+            setTimeout(() => {
+
+                loginTab.click();
+
+            }, 1000);
+
+        }
+
+        else{
+
+            message.innerText =
+                data.error || "Signup Failed";
+
+            message.style.color = "red";
+
+        }
+
+    });
+
+});
+
+</script>
+
+</body>
+</html>
