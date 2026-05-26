@@ -44,16 +44,20 @@ MESSAGE_TAGS = {
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',  
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'chat',
     'account',
     'rest_framework',
     'myapi',
-    'rest_framework_simplejwt.token_blacklist'
+    'rest_framework_simplejwt.token_blacklist',
+    'channels',
+    
 ]
 
 # REST_FRAMEWORK = {
@@ -82,6 +86,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'chat.middleware.AutoLogoutMiddleware',
 ]
 
 ROOT_URLCONF = 'Login_system.urls'
@@ -102,7 +107,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'Login_system.wsgi.application'
+# WSGI_APPLICATION = 'Login_system.wsgi.application'
+ASGI_APPLICATION = 'Login_system.asgi.application'
 
 
 # Database
@@ -166,3 +172,13 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379)],  # default Redis port
+        },
+    },
+}

@@ -13,7 +13,7 @@
 <nav class="navbar navbar-dark bg-dark px-4">
 
     <span class="navbar-brand">
-        🛒 General Mart
+        🛒 Shoes Mart
     </span>
 
     <div>
@@ -88,7 +88,7 @@
 
 document.addEventListener("DOMContentLoaded", function() {
 
-    fetch("http://127.0.0.1:8000/account/cartlist/api/", {
+    fetch("http://127.0.0.1:8001/account/cartlist/api/", {
 
         method: "GET",
         credentials: "include"
@@ -146,7 +146,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <!-- Product Image -->
                     <td>
 
-                        <img src="http://127.0.0.1:8000${item.product_image}"
+                        <img src="http://127.0.0.1:8001${item.product_image}"
                              width="60"
                              height="60"
                              style="object-fit:cover;">
@@ -239,7 +239,7 @@ document.addEventListener("DOMContentLoaded", function() {
 //  UPDATE QUANTITY
 function updateQty(id, action) {
 
-    fetch(`http://127.0.0.1:8000/account/cart/update/api/${id}/`, {
+    fetch(`http://127.0.0.1:8001/account/cart/update/api/${id}/`, {
 
         method: "POST",
 
@@ -275,7 +275,7 @@ function updateQty(id, action) {
 
 function removeItem(id) {
 
-    fetch(`http://127.0.0.1:8000/account/cart/delete/api/${id}/`, {
+    fetch(`http://127.0.0.1:8001/account/cart/delete/api/${id}/`, {
 
         method: "DELETE",
 

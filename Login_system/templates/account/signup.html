@@ -1,224 +1,247 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>General Mart - Signup</title>
+{% extends 'base.html' %}
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(120deg, #4facfe, #00f2fe);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+{% block title %}
+Signup
+{% endblock %}
 
-        .container {
-            background: white;
-            padding: 30px 40px;
-            border-radius: 10px;
-            width: 350px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        }
-        .logo {
-            text-align: center;
-            font-size: 28px;
-            font-weight: bold;
-            letter-spacing: 1px;
-            color: #333;
-        }
+{% block css %}
 
-        .logo span {
-            color: #4facfe;
-        }
+<style>
 
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #333;
-        }
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(120deg, #4facfe, #00f2fe);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
 
-        label {
-            font-weight: bold;
-            font-size: 14px;
-        }
+.container {
+    background: white;
+    padding: 30px 40px;
+    border-radius: 10px;
+    width: 350px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
 
-        input {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            outline: none;
-            transition: 0.3s;
-        }
+.logo {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    color: #333;
+}
 
-        input:focus {
-            border-color: #4facfe;
-            box-shadow: 0 0 5px rgba(79,172,254,0.5);
-        }
+.logo span {
+    color: #4facfe;
+}
 
-        button {
-            width: 100%;
-            padding: 10px;
-            background: #4facfe;
-            border: none;
-            color: white;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+.subtitle {
+    text-align: center;
+    margin-top: -10px;
+    margin-bottom: 20px;
+}
 
-        button:hover {
-            background: #3a8ee6;
-        }
+label {
+    font-weight: bold;
+    font-size: 14px;
+}
 
-        .login-link {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 14px;
-        }
+input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
 
-        .login-link a {
-            color: #4facfe;
-            text-decoration: none;
-            font-weight: bold;
-        }
+button {
+    width: 100%;
+    padding: 10px;
+    background: #4facfe;
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
 
-        .login-link a:hover {
-            text-decoration: underline;
-        }
+.login-link {
+    text-align: center;
+    margin-top: 15px;
+}
 
-        .messages {
-            margin-bottom: 10px;
-        }
+.login-link a {
+    color: #4facfe;
+    text-decoration: none;
+    font-weight: bold;
+}
 
-        .messages p {
-            color: red;
-            font-size: 14px;
-            margin: 5px 0;
-        }
+</style>
 
-        @media (max-width: 400px) {
-            .container {
-                width: 90%;
-                padding: 20px;
-            }
-        }
-    </style>
-</head>
-<body>
+{% endblock %}
+
+{% block content %}
 
 <div class="container">
-    <h2 class="logo"><span>GeNeRaL MaRt</span></h2>
-    <p style="text-align:center; margin-top:-10px;">Create your account</p>
+
+    <h2 class="logo">
+        <span data-translate>Shoes Hub</span>
+    </h2>
+
+    <p class="subtitle" data-translate>
+        Create your account
+    </p>
 
     <div id="msg">
         {% if messages %}
             {% for message in messages %}
-                <p>{{ message }}</p>
+                <p data-translate>{{ message }}</p>
             {% endfor %}
         {% endif %}
     </div>
-    <p id="error-msg" style="color:red; text-align: center;"></p>
-    <p id ="success" style="color:green; text-align: center;"></p>
+
+    <p id="error-msg" style="color:red; text-align:center;"></p>
+
+    <p id="success" style="color:green; text-align:center;"></p>
 
     <form method="POST">
+
         {% csrf_token %}
 
-        <label>Username</label>
-        <input type="text" name="username" placeholder="Enter username" required>
+        <label data-translate>Username</label>
 
-        <label>Email</label>
-        <input type="email" name="email" placeholder="Enter email" required>
+        <input type="text" name="username" placeholder="Enter username">
 
-        <label>Password</label>
-        <input type="password" name="password1" placeholder="Enter password" required >
+        <label data-translate>Email</label>
 
-        <label>Confirm Password</label>
-        <input type="password" name="password2" placeholder="Confirm password" required>
+        <input type="email" name="email" placeholder="Enter email">
 
-        <button type="submit">Create Account</button>
+        <label data-translate>Password</label>
+
+        <input type="password" name="password1" placeholder="Enter password">
+
+        <label data-translate>Confirm Password</label>
+
+        <input type="password" name="password2" placeholder="Confirm password">
+
+        <button type="submit" data-translate>
+            Create Account
+        </button>
+
     </form>
 
     <div class="login-link">
-        Already have an account? 
-        <a href="{% url 'login' %}">Login</a>
+
+        <span data-translate>
+            Already have an account?
+        </span>
+
+        <a href="{% url 'login' %}">
+            <span data-translate>Login</span>
+        </a>
+
     </div>
+
 </div>
+
+{% endblock %}
+
+{% block js %}
+
 <script>
-    document.querySelector('form').addEventListener('submit',function(e){e.preventDefault()
-    let username=document.querySelector('input[name="username"]').value
-    let email=document.querySelector('input[name="email"]').value
-    let password1=document.querySelector('input[name="password1"]').value
-    let confirm=document.querySelector('input[name="password2"]').value
-    if (password1!=confirm){
-        document.querySelector('#error-msg').innerText="password don't match"
-        document.querySelector("#success").innerText=""
-    }
-    else if(password1.length<8)
-    {
-        document.querySelector("#error-msg").innerText="password should be equal and greater than 8"
-        document.querySelector("#success").innerText=""
+
+document.querySelector('form').addEventListener('submit', function(e){
+
+    e.preventDefault()
+
+    let username = document.querySelector('input[name="username"]').value
+    let email = document.querySelector('input[name="email"]').value
+    let password1 = document.querySelector('input[name="password1"]').value
+    let confirm = document.querySelector('input[name="password2"]').value
+
+    if(password1 != confirm){
+
+        document.querySelector('#error-msg').innerText = "password don't match"
+        return
     }
 
-    else if(!/[A-Z]/.test(password1))
-    {
-        document.querySelector("#error-msg").innerText="one character must be Capital"   
+    if(password1.length < 8){
+
+        document.querySelector("#error-msg").innerText =
+        "password should be greater than 8"
+
+        return
     }
 
-    else if (!/[a-z]/.test(password1))
-    {
-        document.querySelector("#error-msg").innerText="one character must be small"   
-    }
-    
-    else if (!/[0-9]/.test(password1))
-    {
-        document.querySelector("#error-msg").innerText="one character must be a number"
+    if(!/[A-Z]/.test(password1)){
+
+        document.querySelector("#error-msg").innerText =
+        "one character must be Capital"
+
+        return
     }
 
-    else if (!/[!@#$%^&*]/.test(password1))
-    {
-        document.querySelector("#error-msg").innerText="one character must be special character"   
+    if(!/[a-z]/.test(password1)){
+
+        document.querySelector("#error-msg").innerText =
+        "one character must be small"
+
+        return
     }
 
-    else 
-    {
-         document.querySelector("#error-msg").innerText=""
+    if(!/[0-9]/.test(password1)){
+
+        document.querySelector("#error-msg").innerText =
+        "one character must be a number"
+
+        return
     }
 
-    fetch("http://127.0.0.1:8000/account/signup/api/", 
-        {
-            method:"POST",
-            headers:{"Content-Type": "application/json"},
-            body:JSON.stringify({
-                username:username,
-                email:email,
-                password:password1
-            })
+    if(!/[!@#$%^&*]/.test(password1)){
+
+        document.querySelector("#error-msg").innerText =
+        "one character must be special character"
+
+        return
+    }
+
+    document.querySelector("#error-msg").innerText = ""
+
+    fetch("http://127.0.0.1:8001/account/signup/api/",
+    {
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+            username:username,
+            email:email,
+            password:password1
         })
-    .then(function(response){
-        return response.json()
     })
+
+    .then(response => response.json())
+
     .then(function(data){
-        if (data.message)
-    {
-         document.querySelector("#success").innerText="Account Created Succcesfully"
-         window.location.href="/account/signup/"
-    }
-    })
+
+        if(data.message){
+
+            document.querySelector("#success").innerText =
+            "Account Created Successfully"
+
+            window.location.href="/account/login/"
+        }
 
     })
 
-    
-    
+})
 
 </script>
 
-</body>
-</html>
+{% endblock %}

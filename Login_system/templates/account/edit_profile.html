@@ -149,7 +149,7 @@ button:hover {
 
 <!-- NAVBAR -->
 <div class="navbar">
-    <div class="logo">General<span>Mart</span></div>
+    <div class="logo">Shoes<span>Hub</span></div>
     <div class="nav-links">
         <a href="{% url 'dashboard' %}">Dashboard</a>
         <a href="{% url 'profile' %}">View Profile</a>
@@ -251,7 +251,7 @@ document.querySelector("form").addEventListener("submit", function(e){
         formData.append("image", file);
     }
 
-    fetch("http://127.0.0.1:8000/account/profile/api/", {
+    fetch("http://127.0.0.1:8001/account/profile/api/", {
         method: "PUT",
         credentials: "include",
         body: formData
@@ -270,7 +270,7 @@ document.querySelector("#logout").addEventListener("click", function(e){
 
     e.preventDefault();
 
-    fetch("http://127.0.0.1:8000/account/logout/api/", {
+    fetch("http://127.0.0.1:8001/account/logout/api/", {
         method:"POST",
         credentials:"include"
     })
@@ -278,7 +278,7 @@ document.querySelector("#logout").addEventListener("click", function(e){
     .then(res => res.json())
     .then(data => {
         if(data.message){
-            window.location.href="/account/login/";
+            window.location.href="/account/both/";
         }
     });
 

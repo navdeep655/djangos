@@ -245,7 +245,7 @@ body{
 <div class="navbar">
 
     <div class="logo">
-        General<span>Mart</span>
+        Shoes<span>Hub</span>
     </div>
 
     <div class="nav-links">
@@ -351,7 +351,7 @@ body{
 
 window.addEventListener("DOMContentLoaded", function () {
 
-    fetch("http://127.0.0.1:8000/account/profile/api/",{
+    fetch("http://127.0.0.1:8001/account/profile/api/",{
         method:"GET",
         credentials:"include"
     })
@@ -379,7 +379,7 @@ window.addEventListener("DOMContentLoaded", function () {
 
 })
 function logoutUser(e){ e.preventDefault();
- fetch("http://127.0.0.1:8000/account/logout/api/",{
+ fetch("http://127.0.0.1:8001/account/logout/api/",{
         method:"POST",
         headers:{
             "Content-Type":"application/json"
@@ -396,7 +396,7 @@ function logoutUser(e){ e.preventDefault();
         console.log(data)
 
         if(data.message){
-            window.location.href="/account/login/"
+            window.location.href="/account/both/"
         }
 
     })

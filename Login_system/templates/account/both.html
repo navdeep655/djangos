@@ -1,18 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
 
-<head>
+{% block title %}
+Signup
+{% endblock %}
 
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>General Mart - Auth</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-          rel="stylesheet">
-
+{% block css %}
     <style>
 
         *{
@@ -221,9 +213,9 @@
 
     </style>
 
-</head>
+{% endblock %}
 
-<body>
+{% block content %}
 
 
 <div class="auth-container">
@@ -232,13 +224,13 @@
 
     <div class="logo">
 
-        <span>GeNeRaL MaRt</span>
+        <span>Shoes Hub</span>
 
     </div>
 
     <div class="subtitle">
 
-        Welcome to General Mart 🛒
+        Welcome to Shoes Hub 👞
 
     </div>
 
@@ -346,6 +338,10 @@
 
 </div>
 
+{% endblock %}
+
+{% block js %}
+
 
 <script>
 
@@ -430,7 +426,7 @@ document.getElementById("loginForm")
 
 
     fetch(
-        "http://127.0.0.1:8000/account/login/api/",
+        "http://127.0.0.1:8001/account/login/api/",
         {
 
             method:"POST",
@@ -547,7 +543,7 @@ document.getElementById("signupForm")
 
 
     fetch(
-        "http://127.0.0.1:8000/account/signup/api/",
+        "http://127.0.0.1:8001/account/signup/api/",
         {
 
             method:"POST",
@@ -605,5 +601,4 @@ document.getElementById("signupForm")
 
 </script>
 
-</body>
-</html>
+{% endblock %}

@@ -110,7 +110,7 @@ console.log(orderId);
 // FETCH ORDER DETAILS
 // =========================
 
-fetch(`http://127.0.0.1:8000/account/orderdetails/api/${orderId}/`, {
+fetch(`http://127.0.0.1:8001/account/orderdetails/api/${orderId}/`, {
 
     method: "GET",
 
@@ -187,7 +187,7 @@ fetch(`http://127.0.0.1:8000/account/orderdetails/api/${orderId}/`, {
                     <div class="col-md-2">
 
                         <img
-                            src="http://127.0.0.1:8000${product.product_image}"
+                            src="http://127.0.0.1:8001${product.product_image}"
 
                             class="img-fluid rounded-start"
 
